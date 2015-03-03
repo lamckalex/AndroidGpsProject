@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Android GPS</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="custom.css">
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script src="gmaps.js"></script>
+  </head>
+
+  <body>
+    <div class="page-header">
+      <h1>Android GPS Assignment <br><small>Track your friends!</small></h1>
+    </div>
+
+    <div id="map-canvas"></div>
+    <br>
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">GPS Records</div>
+        <table id="record" class="table" style="width:100%"></table>
+      </div>
+    </div>
+
+  </body>
+</html>

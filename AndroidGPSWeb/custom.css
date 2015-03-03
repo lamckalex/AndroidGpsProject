@@ -1,0 +1,11 @@
+#map-canvas {
+    margin: auto;
+    height: 80%;
+    width: 80%;
+    border: 2px solid;
+    border-radius: 25px;
+}
+
+.page-header{
+  text-align:center;
+}
