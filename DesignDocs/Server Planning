@@ -1,0 +1,12 @@
+Server Objectives:
+  Create a server that receives TCP connections from the android client
+  Receive packet that contains
+    ip address
+    time
+    gps long
+    gps lan
+  Write to xml file
+
+Website Objective
+  Read from xml file to display coordinates onto google maps api
+  Real time update
