@@ -22,14 +22,40 @@
       <h1>Android GPS Assignment <br><small>Track your friends!</small></h1>
     </div>
 
-    <div id="map-canvas"></div>
+    <div class="container map-container">
+      <div id="map-canvas"></div>
+    </div>
+
     <br>
+    <div class="container">
+      <div class="panel panel-default">
+        <div class="panel-heading">Refresh Settings</div>
+        <div class="panel-body">
+          Manual refresh: <button type="button" class="btn btn-default" onclick="refresh();">Refresh</button>
+          <t>Toggle refresh:
+          <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-primary refresh-btn" onclick="refreshOn();">
+                  <input type="radio" name="options"> On
+              </label>
+              <label class="btn btn-primary refresh-btn active" onclick="refreshOff();">
+                  <input type="radio" name="options" checked> Off
+              </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
       <div class="panel panel-default">
         <div class="panel-heading">GPS Records</div>
         <table id="record" class="table" style="width:100%"></table>
       </div>
     </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
 
   </body>
 </html>
