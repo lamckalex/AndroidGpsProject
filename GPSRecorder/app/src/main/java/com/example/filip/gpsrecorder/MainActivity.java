@@ -2,7 +2,9 @@ package com.example.filip.gpsrecorder;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -14,10 +16,18 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
+    SharedPreferences sharedpreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString("IP_ADDR", "192.168.1.72");
+        editor.putInt("PORT", 7000);
+        editor.commit();
     }
 
 
