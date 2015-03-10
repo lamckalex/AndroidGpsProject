@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -20,11 +22,15 @@ import android.widget.Toast;
  */
 public class LocationUpdateService extends Service {
 
+    public static boolean isRunning = false;
+
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
-    LocationManager locationManager;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
-    public static boolean isRunning = false;
+    WifiManager wifiManager;
+    WifiInfo wifiInfo;
 
     @Override
     public void onCreate() {
@@ -55,7 +61,7 @@ public class LocationUpdateService extends Service {
        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
+        locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 Log.d("", "" + location.toString());
@@ -70,6 +76,13 @@ public class LocationUpdateService extends Service {
 
         // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+        wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        wifiInfo = wifiManager.getConnectionInfo();
+
+        int ipAddress = wifiInfo.getIpAddress();
+
+        Log.d("IP ADDRESS: ", ""+ ipAddress);
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -120,8 +133,8 @@ public class LocationUpdateService extends Service {
 
         Toast.makeText(this, "Broadcasting stopped", Toast.LENGTH_SHORT).show();
         isRunning = false;
-
         mServiceLooper.quit();
+        locationManager.removeUpdates(locationListener);
         super.onDestroy();
     }
 }
