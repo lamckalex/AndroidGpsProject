@@ -12,22 +12,27 @@
       }
     </style>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="custom.css">
+    <link href="css/custom.css" rel="stylesheet" type="text/css" >
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
-    <script src="gmaps.js"></script>
+    <script src="js/gmaps.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
   </head>
 
   <body>
-    <div class="page-header">
-      <h1>Android GPS Assignment <br><small>Track your friends!</small></h1>
-    </div>
+    <header>
+      <div class="page-header">
+        <h1>Android GPS Assignment</h1>
+        <h2>Track your friends!</h2>
+      </div>
+    </header>
 
-    <div class="container map-container">
+    <row>
+    <div class="col-md-6 container map-container">
       <div id="map-canvas"></div>
     </div>
 
-    <br>
-    <div class="container">
+    <div class="col-md-6 container">
       <div class="panel panel-default">
         <div class="panel-heading">Refresh Settings</div>
         <div class="panel-body">
@@ -43,17 +48,19 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="container">
       <div class="panel panel-default">
         <div class="panel-heading">GPS Records</div>
         <table id="record" class="table" style="width:100%"></table>
       </div>
     </div>
 
+  </row>
+
+
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>-->
+    <script src="js/jquery-2.1.3.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
 

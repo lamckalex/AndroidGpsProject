@@ -11,7 +11,7 @@
 
 //defines
 #define SERVER_TCP_PORT 7000	// Default port
-#define BUFLEN	64 * 1024				//Buffer length
+#define BUFLEN	80				//Buffer length
 
 //prototypes
 
@@ -30,6 +30,8 @@ int main()
 		return 1;
 	}
 
+	printf("Start server\n");
+
 	//set up sockaddr_in struct
 	bzero((char *)&server, sizeof(struct sockaddr_in));
 	server.sin_family = AF_INET;
@@ -47,6 +49,8 @@ int main()
 	// queue up to 5 connect requests
 	listen(listen_socket, 5);
 
+	printf("Listening on socket: %d\n", listen_socket);
+
 
 	//go into a read loop
 	for(;;)
@@ -59,6 +63,8 @@ int main()
 		{
 			return 1;
 		}
+
+		printf("Accepted connection: %d\n", new_socket);
 
 		//create a child process to handle the new socket
 		pid = fork();
@@ -75,6 +81,7 @@ int main()
 
 		}
 	}
+
 	return 0;
 }
 
@@ -82,24 +89,23 @@ void readFromClient(int client_socket)
 {
 	int n, bytes_to_read;
 	char	*bp, buf[BUFLEN];
-	bp = buf;
-	bytes_to_read = BUFLEN;
 
-	//read BUFLEN chars from the port
-	while ((n = recv (client_socket, bp, bytes_to_read, 0)) < BUFLEN)
+	while (true)
 	{
-		bp += n;
-		bytes_to_read -= n;
+		bp = buf;
+		bytes_to_read = BUFLEN;
+
+		//read BUFLEN chars from the port
+		while ((n = recv (client_socket, bp, bytes_to_read, 0)) < BUFLEN)
+		{
+			bp += n;
+			bytes_to_read -= n;
+		}
+
+		//deserialize data from port
+		printf("%s", buf);
+		
 	}
-
-	//deserialize data from port
-
-	printf("Debug: contents of buffer: ");
-	for (int i = 0; i < BUFLEN; i++)
-	{
-		printf("%c", bp[i]);
-	}
-
 	//write the text to XML
 
 }

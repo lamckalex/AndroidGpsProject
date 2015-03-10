@@ -32,7 +32,7 @@ function loadXMLDoc(filename)
     {
     xhttp=new ActiveXObject("Microsoft.XMLHTTP");
     }
-  xhttp.open("GET",filename,false);
+  xhttp.open("POST",filename,false);
   xhttp.send();
   return xhttp.responseXML;
 }
