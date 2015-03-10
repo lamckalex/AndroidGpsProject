@@ -3,11 +3,13 @@ package com.example.filip.gpsrecorder;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -16,6 +18,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 
 /**
  * Created by Filip on 2015-03-06.
@@ -28,6 +34,10 @@ public class LocationUpdateService extends Service {
     private ServiceHandler mServiceHandler;
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    SharedPreferences sharedpreferences;
+    Socket clientSocket;
+
 
     WifiManager wifiManager;
     WifiInfo wifiInfo;
@@ -58,13 +68,22 @@ public class LocationUpdateService extends Service {
         Toast.makeText(this, "GPS Service started", Toast.LENGTH_SHORT).show();
         isRunning = true;
 
-       locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
+
+        new RequestConnection().execute();
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         // Define a listener that responds to location updates
         locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // Called when a new location is found by the network location provider.
                 Log.d("", "" + location.toString());
+
+
+
+                new WriteSocket().execute(location.toString());
+
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -82,7 +101,9 @@ public class LocationUpdateService extends Service {
 
         int ipAddress = wifiInfo.getIpAddress();
 
-        Log.d("IP ADDRESS: ", ""+ ipAddress);
+        String ip = intToIp(ipAddress);
+
+        Log.d("IP ADDRESS: ", ""+ ip);
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -93,6 +114,81 @@ public class LocationUpdateService extends Service {
 
         // If we get killed, after returning from here, restart
         return START_STICKY;
+    }
+
+    private String intToIp(int ipAddress) {
+
+        char[] bytes = new char[4];
+
+        String result;
+
+        bytes[0] = (char) (ipAddress & 0xFF);
+        bytes[1] = (char) ((ipAddress >> 8) & 0xFF);
+        bytes[2] = (char) ((ipAddress >> 16) & 0xFF);
+        bytes[3] = (char) ((ipAddress >> 24) & 0xFF);
+
+        result = new String(bytes);
+
+        return result;
+    }
+
+    private class RequestConnection extends AsyncTask<Object, Void, String> {
+
+        @Override
+        protected String doInBackground(Object... params) {
+
+            String ip = sharedpreferences.getString("IP_ADDR", "");
+            int port = sharedpreferences.getInt("PORT", 0);
+
+            Log.d("server ip", ip);
+            Log.d("server port", "" + port);
+
+            try {
+                clientSocket = new Socket(ip, port);
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class WriteSocket extends AsyncTask<Object, Void, String> {
+
+
+        @Override
+        protected String doInBackground(Object... params) {
+
+            OutputStream os;
+
+            String send = (String)params[0];
+
+            try {
+
+                if (clientSocket != null) {
+
+                    clientSocket.setSendBufferSize(1024);
+                    os = clientSocket.getOutputStream();
+
+                    Log.d("Sending ", send);
+
+                    os.write(send.getBytes());
+                    os.flush();
+
+
+                }
+
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+
+
+
+            return null;
+        }
+
     }
 
     // Handler that receives messages from the thread
@@ -135,6 +231,11 @@ public class LocationUpdateService extends Service {
         isRunning = false;
         mServiceLooper.quit();
         locationManager.removeUpdates(locationListener);
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         super.onDestroy();
     }
 }
