@@ -26,7 +26,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Config"
+        android:text="Server Config"
         android:id="@+id/btnConfig"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

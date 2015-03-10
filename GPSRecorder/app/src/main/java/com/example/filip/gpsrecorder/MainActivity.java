@@ -1,8 +1,10 @@
 package com.example.filip.gpsrecorder;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +45,12 @@ public class MainActivity extends Activity {
     }
 
     public void startConfigFragment() {
+
+        FragmentManager fm = getFragmentManager();
+
+        ConfigFragment config = new ConfigFragment();
+
+        config.show(fm, "dialog");
 
     }
 
@@ -85,6 +93,7 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent (Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             return true;
         }
 
