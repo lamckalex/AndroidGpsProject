@@ -32,16 +32,16 @@ Locations readXML ( std::istream& istream )
 	Locations locationList;
 	
 	//traverse the tree structure
-	BOOST_FOREACH ( ptree::value_type const& value, location_data.get_child("locations"))
+	BOOST_FOREACH ( ptree::value_type const& value, location_data.get_child("coordinates"))
 	{
 		//create a new location
 		Location location;
 
 		//add values to the location
-		location.longitude = value.second.get<double>("longitude");
-		location.latitude = value.second.get<double>("latitude");
-		location.ip_address = value.second.get<std::string>("ipaddress");
+		location.longitude = value.second.get<double>("long");
+		location.latitude = value.second.get<double>("lat);
 		location.time = value.second.get<std::string>("time");
+		location.ip_address = value.second.get<std::string>("ip");
 
 		//add the location to the list of locations
 		locationList.push_back(location);
@@ -67,11 +67,11 @@ void writeXML ( Locations locationList, std::ostream& ostream )
 	//given a locatonList, put data into the list
 	BOOST_FOREACH ( Location location, locationList )
 	{
-		ptree& node = location_data.add("locations.location", "");
+		ptree& node = location_data.add("coordinates.coord", "");
 
-		node.put("longitude", location.longitude);
-		node.put("latitude", location.latitude);
-		node.put("ipaddress", location.ip_address);
+		node.put("long", location.longitude);
+		node.put("lat", location.latitude);
+		node.put("ip", location.ip_address);
 		node.put("time", location.time);
 	}
 
