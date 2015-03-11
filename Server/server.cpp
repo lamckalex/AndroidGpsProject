@@ -10,17 +10,28 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <string>
+#include <string.h>
 
 //defines
 #define SERVER_TCP_PORT 7000	// Default port
 #define BUFLEN	1024				//Buffer length
+
+struct LocationStruct
+{
+	std::string longitude;
+	std::string lat;
+	std::string timestamp;
+	std::string ip;
+};
 
 //prototypes
 
 void readFromClient(int client_socket);
 void sig_handler (int sig);
 
-int 	listen_socket, new_socket;
+int listen_socket, new_socket;
+LocationStruct *packet;
 
 int main()
 {
@@ -29,6 +40,8 @@ int main()
 	pid_t	pid;
 
 	signal(SIGINT, sig_handler);
+
+	packet = (LocationStruct*)malloc(sizeof(LocationStruct));
 
 	//set up a TCP listening socket
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -100,6 +113,8 @@ void readFromClient(int client_socket)
 	int n, bytes_to_read;
 	char	*bp, buf[BUFLEN];
 
+	memset(buf, 0, sizeof(buf));
+
 	fflush(stdout);
 	
 	bp = buf;
@@ -114,15 +129,32 @@ void readFromClient(int client_socket)
 		if (n == 0)
 		{
 			printf("Socket: %d disconnected\n", client_socket);
+			fflush(stdout);
 			close(client_socket);
 			break;
 		}
 
+	   	/*packet->longitude = strtok(buf, ",");
+		printf("Longitude: %s\n", packet->longitude.c_str());
+		fflush(stdout);
 
-		//deserialize data from port
+		packet->lat = strtok(NULL, ",");
+		printf("Lattitude: %s\n", packet->lat.c_str());
+		fflush(stdout);
+
+		packet->timestamp = strtok(NULL, ",");
+		printf("timestamp: %s\n", packet->timestamp.c_str());
+		fflush(stdout);
+
+		packet->ip = strtok(NULL, ",");
+		printf("ip from:   %s\n\n", packet->ip.c_str());
+		fflush(stdout);*/
+
+
 		printf("Received: %s\n", buf);
 		fflush(stdout);
 
+		//deserialize data from port
 
 	}
 		

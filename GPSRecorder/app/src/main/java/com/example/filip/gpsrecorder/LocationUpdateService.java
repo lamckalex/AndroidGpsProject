@@ -21,7 +21,13 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Filip on 2015-03-06.
@@ -38,9 +44,10 @@ public class LocationUpdateService extends Service {
     private SharedPreferences sharedpreferences;
     private Socket clientSocket;
 
-
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
+
+    private InetAddress deviceIP = null;
 
     @Override
     public void onCreate() {
@@ -72,36 +79,23 @@ public class LocationUpdateService extends Service {
 
         new RequestConnection().execute();
 
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        // Define a listener that responds to location updates
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Called when a new location is found by the network location provider.
-                Log.d("", "" + location.toString());
-
-                new WriteSocket().execute(location.toString());
-
-            }
-
-            public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-            public void onProviderEnabled(String provider) {}
-
-            public void onProviderDisabled(String provider) {}
-        };
-
-        // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
 
         int ipAddress = wifiInfo.getIpAddress();
+        byte[] bytes = BigInteger.valueOf(ipAddress).toByteArray();
 
-        String ip = intToIp(ipAddress);
+        reverse(bytes);
 
-        Log.d("DEVICE IP ADDRESS: ", ""+ ip);
+        try {
+            deviceIP = InetAddress.getByAddress(bytes);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
+
+        startLocationDiscovery();
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -114,21 +108,46 @@ public class LocationUpdateService extends Service {
         return START_STICKY;
     }
 
-    private String intToIp(int ipAddress) {
+    private void startLocationDiscovery() {
 
-        char[] bytes = new char[4];
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        String result;
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                Log.d("", "" + location.toString());
 
-        bytes[0] = (char) (ipAddress & 0xFF);
-        bytes[1] = (char) ((ipAddress >> 8) & 0xFF);
-        bytes[2] = (char) ((ipAddress >> 16) & 0xFF);
-        bytes[3] = (char) ((ipAddress >> 24) & 0xFF);
+                String packet = buildPacket(location);
 
-        result = new String(bytes);
+                new WriteSocket().execute(packet);
 
-        return result;
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
     }
+
+    private String buildPacket(Location l) {
+
+        if (l == null)
+            return null;
+
+        String s;
+
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + l.getTime() + ", " + deviceIP;
+
+        return s;
+    }
+
+
 
     private class RequestConnection extends AsyncTask<Object, Void, String> {
 
@@ -172,17 +191,12 @@ public class LocationUpdateService extends Service {
 
                     os.write(send.getBytes());
                     os.flush();
-
-
                 }
 
 
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
-
-
-
 
             return null;
         }
@@ -222,6 +236,9 @@ public class LocationUpdateService extends Service {
     }
 
 
+    /**
+     *
+     */
     @Override
     public void onDestroy() {
 
@@ -237,4 +254,25 @@ public class LocationUpdateService extends Service {
         }
         super.onDestroy();
     }
+
+    /**
+     *
+     * @param array
+     */
+    private void reverse(byte[] array) {
+        if (array == null) {
+            return;
+        }
+        int i = 0;
+        int j = array.length - 1;
+        byte tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+    }
+
 }
