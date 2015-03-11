@@ -8,6 +8,8 @@
 #include <arpa/inet.h>
 #include <cstdlib>
 #include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 //defines
 #define SERVER_TCP_PORT 7000	// Default port
@@ -16,12 +18,17 @@
 //prototypes
 
 void readFromClient(int client_socket);
+void sig_handler (int sig);
+
+int 	listen_socket, new_socket;
 
 int main()
 {
-	int 	listen_socket, new_socket, retval, client_len;
+	int 	retval, client_len;
 	struct	sockaddr_in server, client;	
 	pid_t	pid;
+
+	signal(SIGINT, sig_handler);
 
 	//set up a TCP listening socket
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -82,6 +89,9 @@ int main()
 		}
 	}
 
+	close(listen_socket);
+	close(new_socket);
+
 	return 0;
 }
 
@@ -90,22 +100,57 @@ void readFromClient(int client_socket)
 	int n, bytes_to_read;
 	char	*bp, buf[BUFLEN];
 
-	while (true)
+	printf("In child");
+	
+	bp = buf;
+	bytes_to_read = BUFLEN;
+
+	//read BUFLEN chars from the port
+	while ((n = recv (client_socket, bp, bytes_to_read, 0)) < BUFLEN)
 	{
-		bp = buf;
-		bytes_to_read = BUFLEN;
-
-		//read BUFLEN chars from the port
-		while ((n = recv (client_socket, bp, bytes_to_read, 0)) < BUFLEN)
-		{
-			bp += n;
-			bytes_to_read -= n;
-		}
-
-		//deserialize data from port
-		printf("%s", buf);
-		
+		bp += n;
+		bytes_to_read -= n;
 	}
+
+	//deserialize data from port
+	printf("%s", buf);
+		
+	
 	//write the text to XML
 
+}
+
+/*******************************************************************************************************
+** Function: 	sig_handler
+**
+** DATE:		February 11, 2015
+**
+** REVISIONS:	
+**
+** DESIGNER:	Filip Gutica A00781910
+**
+** PROGRAMMER:	Filip Gutica A00781910
+**
+** INTERFACE:	void server(int qid, long type, struct msgbuf qbuf)
+**
+** Params:		sig 	-signal to be handled
+**
+** RETURNS: void
+**
+** NOTES:
+** Removes the Message Queue on a SIGINT signal
+******************************************************************************************************/
+void sig_handler (int sig)
+{
+	int status;
+
+	if (sig == SIGINT)
+	{
+		/* Remove he message queue */
+		close(listen_socket);
+		close(new_socket);
+
+		wait(&status);
+		exit(0);
+	}
 }
