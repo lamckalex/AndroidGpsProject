@@ -35,12 +35,12 @@ public class LocationUpdateService extends Service {
     private LocationManager locationManager;
     private LocationListener locationListener;
 
-    SharedPreferences sharedpreferences;
-    Socket clientSocket;
+    private SharedPreferences sharedpreferences;
+    private Socket clientSocket;
 
 
-    WifiManager wifiManager;
-    WifiInfo wifiInfo;
+    private WifiManager wifiManager;
+    private WifiInfo wifiInfo;
 
     @Override
     public void onCreate() {
@@ -135,7 +135,7 @@ public class LocationUpdateService extends Service {
         @Override
         protected String doInBackground(Object... params) {
 
-            String ip = sharedpreferences.getString("IP_ADDR", "192.162.0.82");
+            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
             int port = sharedpreferences.getInt("PORT", 7000);
 
             Log.d("server ip", ip);

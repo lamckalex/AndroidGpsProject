@@ -11,12 +11,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 
 
 public class MainActivity extends Activity {
 
-    SharedPreferences sharedpreferences;
+    private SharedPreferences sharedpreferences;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +28,14 @@ public class MainActivity extends Activity {
 
         sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString("IP_ADDR", "192.168.1.72");
+        editor.putString("IP_ADDR", "92.48.9.41");
         editor.putInt("PORT", 7000);
         editor.commit();
+
+        webView = (WebView) findViewById(R.id.webView);
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl("http://lamckalex.ddns.net/");
     }
 
 
@@ -40,8 +48,8 @@ public class MainActivity extends Activity {
 
     public void onBtnClick(View v) {
 
-        switch (v.getId())
-        {
+        switch (v.getId()) {
+
             case R.id.btnCheckIn:
                 checkIn();
                 break;
