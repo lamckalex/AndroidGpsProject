@@ -35,12 +35,12 @@ public class LocationUpdateService extends Service {
     private LocationManager locationManager;
     private LocationListener locationListener;
 
-    SharedPreferences sharedpreferences;
-    Socket clientSocket;
+    private SharedPreferences sharedpreferences;
+    private Socket clientSocket;
 
 
-    WifiManager wifiManager;
-    WifiInfo wifiInfo;
+    private WifiManager wifiManager;
+    private WifiInfo wifiInfo;
 
     @Override
     public void onCreate() {
@@ -80,8 +80,6 @@ public class LocationUpdateService extends Service {
                 // Called when a new location is found by the network location provider.
                 Log.d("", "" + location.toString());
 
-
-
                 new WriteSocket().execute(location.toString());
 
             }
@@ -103,7 +101,7 @@ public class LocationUpdateService extends Service {
 
         String ip = intToIp(ipAddress);
 
-        Log.d("IP ADDRESS: ", ""+ ip);
+        Log.d("DEVICE IP ADDRESS: ", ""+ ip);
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -137,8 +135,8 @@ public class LocationUpdateService extends Service {
         @Override
         protected String doInBackground(Object... params) {
 
-            String ip = sharedpreferences.getString("IP_ADDR", "");
-            int port = sharedpreferences.getInt("PORT", 0);
+            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
+            int port = sharedpreferences.getInt("PORT", 7000);
 
             Log.d("server ip", ip);
             Log.d("server port", "" + port);
@@ -232,7 +230,8 @@ public class LocationUpdateService extends Service {
         mServiceLooper.quit();
         locationManager.removeUpdates(locationListener);
         try {
-            clientSocket.close();
+            if (clientSocket != null)
+                clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
