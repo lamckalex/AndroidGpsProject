@@ -171,7 +171,7 @@ public class LocationUpdateService extends Service {
                     Log.d("Sending ", send);
 
                     os.write(send.getBytes());
-                   // os.flush();
+                    os.flush();
 
 
                 }
