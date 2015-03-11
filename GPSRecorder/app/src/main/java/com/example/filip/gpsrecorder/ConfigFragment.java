@@ -20,6 +20,8 @@ public class ConfigFragment extends DialogFragment{
     SharedPreferences.Editor editor;
     EditText ipTxt;
     EditText portTxt;
+    EditText minTimeTxt;
+    EditText minDistanceTxt;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -40,21 +42,34 @@ public class ConfigFragment extends DialogFragment{
                         sharedpreferences = layout.getContext().getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
                         ipTxt = (EditText) layout.findViewById(R.id.ip);
                         portTxt = (EditText) layout.findViewById(R.id.port);
+                        minTimeTxt = (EditText) layout.findViewById(R.id.minTimeTxt);
+                        minDistanceTxt = (EditText) layout.findViewById(R.id.minDistanceTxt);
 
-                        String ip, port;
-                        int portNum;
+                        String ip, port, time, dist;
+                        int portNum = 7000;
+                        int minTime = 1000;
+                        int minDist = 5;
 
                         ip = ipTxt.getText().toString();
                         port = portTxt.getText().toString();
+                        time = minTimeTxt.getText().toString();
+                        dist = minDistanceTxt.getText().toString();
+
                         try {
                             portNum = Integer.parseInt(port);
+                            minTime = Integer.parseInt(time);
+                            minDist = Integer.parseInt(dist);
                         } catch (NumberFormatException e) {
-                            portNum = 7000;
+                            e.printStackTrace();
                         }
+
                         editor = sharedpreferences.edit();
 
                         editor.putString("IP_ADDR", ip);
                         editor.putInt("PORT", portNum);
+                        editor.putInt("MIN_TIME", minTime);
+                        editor.putInt("MIN_DISTANCE", minDist);
+
                         editor.commit();
                     }
                 })
