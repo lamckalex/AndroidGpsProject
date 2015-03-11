@@ -13,7 +13,7 @@
 
 //defines
 #define SERVER_TCP_PORT 7000	// Default port
-#define BUFLEN	80				//Buffer length
+#define BUFLEN	1024				//Buffer length
 
 //prototypes
 
@@ -100,24 +100,36 @@ void readFromClient(int client_socket)
 	int n, bytes_to_read;
 	char	*bp, buf[BUFLEN];
 
-	printf("In child");
+	fflush(stdout);
 	
 	bp = buf;
 	bytes_to_read = BUFLEN;
 
-	//read BUFLEN chars from the port
-	while ((n = recv (client_socket, bp, bytes_to_read, 0)) < BUFLEN)
+	while(true)
 	{
-		bp += n;
-		bytes_to_read -= n;
-	}
 
-	//deserialize data from port
-	printf("%s", buf);
+		//read BUFLEN chars from the port
+		n = recv (client_socket, bp, bytes_to_read, 0);
+		
+		if (n == 0)
+		{
+			printf("Socket: %d disconnected\n", client_socket);
+			close(client_socket);
+			break;
+		}
+
+
+		//deserialize data from port
+		printf("Received: %s\n", buf);
+		fflush(stdout);
+
+
+	}
 		
 	
 	//write the text to XML
 
+	exit(0);
 }
 
 /*******************************************************************************************************
