@@ -5,6 +5,12 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -15,16 +21,34 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 
 public class MainActivity extends Activity {
 
     private SharedPreferences sharedpreferences;
     private WebView webView;
 
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private Socket clientSocket;
+
+    private WifiManager wifiManager;
+    private WifiInfo wifiInfo;
+
+    private InetAddress deviceIP = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -35,8 +59,30 @@ public class MainActivity extends Activity {
         webView = (WebView) findViewById(R.id.webView);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://lamckalex.ddns.net/");
+        webView.loadUrl("http://lamckalex.ddns.net/webview");
+
+        getDeviceIP();
     }
+
+    private void getDeviceIP() {
+
+        wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        wifiInfo = wifiManager.getConnectionInfo();
+
+        int ipAddress = wifiInfo.getIpAddress();
+        byte[] bytes = BigInteger.valueOf(ipAddress).toByteArray();
+
+        reverse(bytes);
+
+        try {
+            deviceIP = InetAddress.getByAddress(bytes);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
+    }
+
 
 
     @Override
@@ -91,7 +137,73 @@ public class MainActivity extends Activity {
 
     public void checkIn() {
 
+        new RequestConnection().execute();
+
+        requestLocationUpdate();
+
     }
+
+    private void requestLocationUpdate() {
+
+        int minTimeUpdate;
+        int minDistUpdate;
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        String useProvider;
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+
+            useProvider = LocationManager.NETWORK_PROVIDER;
+        }
+        else if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) &&
+                locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+            useProvider = LocationManager.GPS_PROVIDER;
+        }
+        else {
+
+            useProvider = LocationManager.PASSIVE_PROVIDER;
+        }
+
+        // Define a listener that responds to location updates
+        locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                Log.d("", "" + location.toString());
+
+                String packet = buildPacket(location);
+
+                new WriteSocket().execute(packet);
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+
+
+        };
+
+        Log.d("USING PROVIDER", useProvider);
+        minTimeUpdate = sharedpreferences.getInt("MIN_TIME", 1000);
+        minDistUpdate = sharedpreferences.getInt("MIN_DISTANCE", 5);
+        Log.d("MIN TIME", ""+minTimeUpdate);
+        Log.d("MIN DISTANCE", ""+minDistUpdate);
+        // Register the listener with the Location Manager to receive location updates
+        locationManager.requestSingleUpdate(useProvider, locationListener, null);
+    }
+
 
     private void updateBtnText(boolean serviceEnabled) {
         Button btn = (Button)findViewById(R.id.btnService);
@@ -116,5 +228,95 @@ public class MainActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class RequestConnection extends AsyncTask<Object, Void, String> {
+
+        @Override
+        protected String doInBackground(Object... params) {
+
+            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
+            int port = sharedpreferences.getInt("PORT", 7000);
+
+            Log.d("server ip", ip);
+            Log.d("server port", "" + port);
+
+            try {
+                clientSocket = new Socket(ip, port);
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private class WriteSocket extends AsyncTask<Object, Void, String> {
+
+
+        @Override
+        protected String doInBackground(Object... params) {
+
+            OutputStream os;
+
+            String send = (String)params[0];
+
+            try {
+
+                if (clientSocket != null) {
+
+                    clientSocket.setSendBufferSize(1024);
+                    os = clientSocket.getOutputStream();
+
+                    Log.d("Sending ", send);
+
+                    os.write(send.getBytes());
+                    os.flush();
+
+                    clientSocket.close();
+                }
+
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            return null;
+        }
+
+    }
+
+
+
+    /**
+     *
+     * @param array
+     */
+    private void reverse(byte[] array) {
+        if (array == null) {
+            return;
+        }
+        int i = 0;
+        int j = array.length - 1;
+        byte tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+    }
+
+    private String buildPacket(Location l) {
+
+        if (l == null)
+            return null;
+
+        String s;
+
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + l.getTime() + ", " + deviceIP;
+
+        return s;
     }
 }

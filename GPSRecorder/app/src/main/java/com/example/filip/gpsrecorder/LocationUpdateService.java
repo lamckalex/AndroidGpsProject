@@ -4,9 +4,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -79,6 +81,23 @@ public class LocationUpdateService extends Service {
 
         new RequestConnection().execute();
 
+        getDeviceIP();
+
+        startLocationDiscovery();
+
+        // For each start request, send a message to start a job and deliver the
+        // start ID so we know which request we're stopping when we finish the job
+        Message msg = mServiceHandler.obtainMessage();
+        msg.arg1 = startId;
+        //Log.d("", "" + intent.getStringExtra("PARAM_1"));
+        mServiceHandler.sendMessage(msg);
+
+        // If we get killed, after returning from here, restart
+        return START_STICKY;
+    }
+
+    private void getDeviceIP() {
+
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
 
@@ -94,23 +113,29 @@ public class LocationUpdateService extends Service {
         }
 
         Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
-
-        startLocationDiscovery();
-
-        // For each start request, send a message to start a job and deliver the
-        // start ID so we know which request we're stopping when we finish the job
-        Message msg = mServiceHandler.obtainMessage();
-        msg.arg1 = startId;
-        //Log.d("", "" + intent.getStringExtra("PARAM_1"));
-        mServiceHandler.sendMessage(msg);
-
-        // If we get killed, after returning from here, restart
-        return START_STICKY;
     }
 
     private void startLocationDiscovery() {
 
+        int minTimeUpdate;
+        int minDistUpdate;
+
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        String useProvider;
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+
+            useProvider = LocationManager.NETWORK_PROVIDER;
+        }
+        else if (!locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) &&
+                 locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+            useProvider = LocationManager.GPS_PROVIDER;
+        }
+        else {
+
+            useProvider = LocationManager.PASSIVE_PROVIDER;
+        }
 
         // Define a listener that responds to location updates
         locationListener = new LocationListener() {
@@ -131,8 +156,13 @@ public class LocationUpdateService extends Service {
             public void onProviderDisabled(String provider) {}
         };
 
+        Log.d("USING PROVIDER", useProvider);
+        minTimeUpdate = sharedpreferences.getInt("MIN_TIME", 1000);
+        minDistUpdate = sharedpreferences.getInt("MIN_DISTANCE", 5);
+        Log.d("MIN TIME", ""+minTimeUpdate);
+        Log.d("MIN DISTANCE", ""+minDistUpdate);
         // Register the listener with the Location Manager to receive location updates
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        locationManager.requestLocationUpdates(useProvider, minTimeUpdate, minDistUpdate, locationListener);
     }
 
     private String buildPacket(Location l) {
@@ -146,7 +176,6 @@ public class LocationUpdateService extends Service {
 
         return s;
     }
-
 
 
     private class RequestConnection extends AsyncTask<Object, Void, String> {

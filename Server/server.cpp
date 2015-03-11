@@ -17,21 +17,22 @@
 #define SERVER_TCP_PORT 7000	// Default port
 #define BUFLEN	1024				//Buffer length
 
-struct LocationStruct
+struct pdata
 {
-	std::string longitude;
-	std::string lat;
-	std::string timestamp;
-	std::string ip;
+  char* plong;
+  char* plat;
+  char* pip;
+  char* ptime;
 };
 
 //prototypes
 
 void readFromClient(int client_socket);
+pdata rawToPData(char* str);
 void sig_handler (int sig);
 
 int listen_socket, new_socket;
-LocationStruct *packet;
+pdata *packet;
 
 int main()
 {
@@ -41,7 +42,7 @@ int main()
 
 	signal(SIGINT, sig_handler);
 
-	packet = (LocationStruct*)malloc(sizeof(LocationStruct));
+	packet = (pdata*)malloc(sizeof(pdata));
 
 	//set up a TCP listening socket
 	listen_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -134,24 +135,8 @@ void readFromClient(int client_socket)
 			break;
 		}
 
-	   	/*packet->longitude = strtok(buf, ",");
-		printf("Longitude: %s\n", packet->longitude.c_str());
-		fflush(stdout);
 
-		packet->lat = strtok(NULL, ",");
-		printf("Lattitude: %s\n", packet->lat.c_str());
-		fflush(stdout);
-
-		packet->timestamp = strtok(NULL, ",");
-		printf("timestamp: %s\n", packet->timestamp.c_str());
-		fflush(stdout);
-
-		packet->ip = strtok(NULL, ",");
-		printf("ip from:   %s\n\n", packet->ip.c_str());
-		fflush(stdout);*/
-
-
-		printf("Received: %s\n", buf);
+		rawToPData(buf);
 		fflush(stdout);
 
 		//deserialize data from port
@@ -163,6 +148,34 @@ void readFromClient(int client_socket)
 
 	exit(0);
 }
+
+/*
+Alex's string to char* parser
+*/
+pdata rawToPData(char* str)
+{
+  pdata p;
+
+  char * pch;
+  printf ("Splitting string \"%s\" into tokens:\n",str);
+  pch = strtok (str,",");
+
+  p.plong = pch;
+  pch = strtok (NULL, ",");
+  p.plat = pch;
+  pch = strtok (NULL, ",");
+  p.pip = pch;
+  pch = strtok (NULL, ",");
+  p.ptime = pch;
+  pch = strtok (NULL, ",");
+
+  printf("%s\n", p.plong);
+  printf("%s\n", p.plat);
+  printf("%s\n", p.pip);
+  printf("%s\n", p.ptime);
+
+}
+
 
 /*******************************************************************************************************
 ** Function: 	sig_handler
