@@ -3,16 +3,14 @@
 	<coord>
 		<long>49.247911</long>
 		<lat>-123.005501</lat>
-		<name>Metrotown</name>
-		<time>12:00:00</time>
 		<ip>192.168.0.1</ip>
+		<time>12:00:00</time>
 	</coord>
 
 	<coord>
 		<long>49.2514754</long>
 		<lat>-123.0253914</lat>
-		<name>Grand Villa</name>
-		<time>12:00:00</time>
 		<ip>192.168.0.1</ip>
+		<time>12:00:00</time>
 	</coord>
 </coordinates>

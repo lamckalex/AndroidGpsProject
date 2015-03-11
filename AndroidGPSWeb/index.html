@@ -36,16 +36,22 @@
       <div class="panel panel-default">
         <div class="panel-heading">Refresh Settings</div>
         <div class="panel-body">
-          Manual refresh: <button type="button" class="btn btn-default" onclick="refresh();">Refresh</button>
-          <t>Toggle refresh:
-          <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-primary refresh-btn" onclick="refreshOn();">
-                  <input type="radio" name="options"> On
-              </label>
-              <label class="btn btn-primary refresh-btn active" onclick="refreshOff();">
-                  <input type="radio" name="options" checked> Off
-              </label>
-          </div>
+          <row>
+            <div class="col-md-6">
+              Manual refresh: <button type="button" class="btn btn-default" onclick="refresh();">Refresh</button><t>
+            </div>
+            <div class="col-md-6">
+              Toggle refresh:
+              <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-primary refresh-btn" onclick="refreshOn();">
+                      <input type="radio" name="options"> On
+                  </label>
+                  <label class="btn btn-primary refresh-btn active" onclick="refreshOff();">
+                      <input type="radio" name="options" checked> Off
+                  </label>
+              </div>
+            </div>
+          </row>
         </div>
       </div>
       <div class="panel panel-default">

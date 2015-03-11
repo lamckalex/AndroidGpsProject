@@ -1,12 +1,14 @@
 #map-canvas {
     margin: auto;
     border: 2px solid;
+    min-height: 400px;
     /*border-radius: 25px;*/
 }
 
 .map-container{
     margin: 0;
    padding: 10px;
+   min-height: 500px;
    height: 80%;
 }
 

@@ -10,7 +10,6 @@ function initialize() {
   }
 
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
 /*
   var marker = new google.maps.Marker({
       position: bcitLatlng,
@@ -48,8 +47,8 @@ function makeTableRow(row, ip, time, long, lat)
 
     cell1.innerHTML = ip;
     cell2.innerHTML = time;
-    cell3.innerHTML = long;
-    cell4.innerHTML = lat;
+    cell3.innerHTML = Number(long).toFixed(4);
+    cell4.innerHTML = Number(lat).toFixed(4);
 }
 
 function makeTableHead()
