@@ -100,10 +100,9 @@ void readFromClient(int client_socket)
 		{
 			bp += n;
 			bytes_to_read -= n;
+			//deserialize data from port
+			printf("%s", buf);
 		}
-
-		//deserialize data from port
-		printf("%s", buf);
 		
 	}
 	//write the text to XML
