@@ -1,0 +1,14 @@
+using boost
+
+place the boost directory into your root folder. This makes it easier to invoke the libraries in your command line
+
+GENERIC COMPILE EXAMPLE:
+g++ -I path/to/boost_1_57_0 example.cpp -o example
+
+HOW I COMPILED:
+g++ -I/boost1_57_0 *.cpp -o server2
+
+yeah i used wildcard.
+
+reference:
+http://www.boost.org/doc/libs/1_57_0/more/getting_started/unix-variants.html#build-a-simple-program-using-boost
