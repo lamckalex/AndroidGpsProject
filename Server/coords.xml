@@ -1,9 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<locations>
-	<location>
-		<longitude>0</longitude>
-		<latitude>0</latitude>
-		<ipaddress>255.255.255.255</ipaddress>
-		<time>2015-03-10 05:30:00pm</time>
-	</location>
-</locations>
+<coordinates><coord><long>0</long><lat>0</lat><ip>255.255.255.255</ip><time>2015-03-10 05:30:00pm</time></coord></coordinates>

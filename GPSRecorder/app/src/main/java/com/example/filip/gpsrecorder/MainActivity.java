@@ -27,6 +27,8 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends Activity {
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
         webView = (WebView) findViewById(R.id.webView);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://lamckalex.ddns.net/webview");
+        webView.loadUrl("http://lamckalex.ddns.net");
 
         getDeviceIP();
     }
@@ -315,7 +317,12 @@ public class MainActivity extends Activity {
 
         String s;
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + l.getTime() + ", " + deviceIP;
+        Date d = new Date(l.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        String sDate = sdf.format(d);
+
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate;
 
         return s;
     }
