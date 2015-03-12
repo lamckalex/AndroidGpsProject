@@ -160,7 +160,7 @@ void readFromClient(int client_socket)
 
 	}
 
-	exit(0);
+	return;
 }
 
 /*
