@@ -102,7 +102,6 @@ int main()
 		{
 			//child code
 			readFromClient(new_socket);
-
 		}
 	}
 
@@ -138,7 +137,6 @@ void readFromClient(int client_socket)
 			break;
 		}
 
-
 		pdata data = rawToPData(buf);
 		fflush(stdout);
 
@@ -153,7 +151,7 @@ void readFromClient(int client_socket)
 		locations.push_back(location);
 
 		//write to XML
-		std::ofstream output("output.xml");
+		std::ofstream output("coords.xml");
   		writeXML( locations, output );
 
 	}
