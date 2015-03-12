@@ -183,7 +183,7 @@ public class LocationUpdateService extends Service {
         @Override
         protected String doInBackground(Object... params) {
 
-            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
+            String ip = sharedpreferences.getString("IP_ADDR", "lamckalex.ddns.net");
             int port = sharedpreferences.getInt("PORT", 7000);
 
             Log.d("server ip", ip);

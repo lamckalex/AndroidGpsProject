@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 
         sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString("IP_ADDR", "92.48.9.41");
+        editor.putString("IP_ADDR", "lamckalex.ddns.net");
         editor.putInt("PORT", 7000);
         editor.commit();
 
@@ -62,6 +62,7 @@ public class MainActivity extends Activity {
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("http://lamckalex.ddns.net");
+      
 
         getDeviceIP();
     }
@@ -237,7 +238,7 @@ public class MainActivity extends Activity {
         @Override
         protected String doInBackground(Object... params) {
 
-            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
+            String ip = sharedpreferences.getString("IP_ADDR", "lamckalex.ddns.net");
             int port = sharedpreferences.getInt("PORT", 7000);
 
             Log.d("server ip", ip);
