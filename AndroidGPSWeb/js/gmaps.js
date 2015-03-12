@@ -11,13 +11,7 @@ function initialize() {
   }
 
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-/*
-  var marker = new google.maps.Marker({
-      position: bcitLatlng,
-      map: map,
-      title: 'BCIT'
-  });
-*/
+
   mode = "allCurrent";
   makeTableHead();
   mostRecentMarkers();
@@ -38,7 +32,7 @@ function loadXMLDoc(filename)
   return xhttp.responseXML;
 }
 
-function makeTableRow(row, ip, time, long, lat)
+function makeTableRow(row, ip, time, longt, lat)
 {
     var table = document.getElementById("record");
     var row = table.insertRow(row+1);
@@ -49,7 +43,7 @@ function makeTableRow(row, ip, time, long, lat)
 
     cell1.innerHTML = ip;
     cell2.innerHTML = time;
-    cell3.innerHTML = Number(long).toFixed(4);
+    cell3.innerHTML = Number(longt).toFixed(4);
     cell4.innerHTML = Number(lat).toFixed(4);
 }
 
@@ -102,10 +96,10 @@ function addMarkers()
     {
       var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
       var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
-      var long = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
+      var longt = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
       var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
 
-      var newCoord = new google.maps.LatLng(long,lat);
+      var newCoord = new google.maps.LatLng(lat,longt);
 
       var marker = new google.maps.Marker({
           position: newCoord,
@@ -115,7 +109,7 @@ function addMarkers()
 
       markersArray.push(marker);
 
-      makeTableRow(i, ip, time, long, lat);
+      makeTableRow(i, ip, time, longt, lat);
     }
 }
 
@@ -160,10 +154,10 @@ function mostRecentMarkers()
             if (ip == uniqueIPs[j])
             {
                 var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
-                var long = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
+                var longt = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
                 var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
 
-                var newCoord = new google.maps.LatLng(long,lat);
+                var newCoord = new google.maps.LatLng(lat, longt);
 
                 var marker = new google.maps.Marker({
                     position: newCoord,
@@ -173,7 +167,7 @@ function mostRecentMarkers()
 
                 markersArray.push(marker);
 
-                makeTableRow(j, ip, time, long, lat);
+                makeTableRow(j, ip, time, longt, lat);
                 break;
             }
         }
@@ -193,10 +187,10 @@ function ipHistoryMarkers(givenIP)
         continue;
         
     var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
-    var long = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
+    var longt = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
     var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
 
-    var newCoord = new google.maps.LatLng(long,lat);
+    var newCoord = new google.maps.LatLng(lat,longt);
         
     var marker = new google.maps.Marker({
         position: newCoord,
@@ -209,9 +203,9 @@ function ipHistoryMarkers(givenIP)
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
     else
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
-    
+
     markersArray.push(marker);
-    makeTableRow(rowCounter, ip, time, long, lat);
+    makeTableRow(rowCounter, ip, time, longt, lat);
     rowCounter++;
   }
 }
@@ -224,7 +218,7 @@ function allCurrent()
 
 function singleIPHistory()
 {
-    mode = document.getElementById("ipAddress").value;    
+    mode = " "+document.getElementById("ipAddress").value;    
     refresh();
 }
 

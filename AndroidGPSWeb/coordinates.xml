@@ -1,16 +1,2 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<coordinates>
-	<coord>
-		<long>49.247911</long>
-		<lat>-123.005501</lat>
-		<ip>192.168.0.1</ip>
-		<time>12:00:00</time>
-	</coord>
-
-	<coord>
-		<long>49.2514754</long>
-		<lat>-123.0253914</lat>
-		<ip>192.168.0.1</ip>
-		<time>12:00:00</time>
-	</coord>
-</coordinates>
+<?xml version="1.0" encoding="utf-8"?>
+<coordinates><coord><long>-122.81325169</long><lat>49.29725632</lat><ip> /192.168.2.89</ip><time> 11/03/2015 22:06:15</time></coord><coord><long>-122.8049297</long><lat>49.292169</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:09:25</time></coord><coord><long>-122.8049488</long><lat>49.2921689</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:12:35</time></coord><coord><long>-122.8049527</long><lat>49.2921684</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:17:44</time></coord><coord><long>-122.8049464</long><lat>49.2921691</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:18:07</time></coord><coord><long>-122.8049561</long><lat>49.2921703</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:38:28</time></coord><coord><long>-122.804949</long><lat>49.2921693</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:38:53</time></coord><coord><long>-122.8049492</long><lat>49.2921704</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:42:54</time></coord><coord><long>-122.8049447</long><lat>49.2921693</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:43:11</time></coord><coord><long>-123.0997658</long><lat>49.258795</lat><ip> /24.85.105.64</ip><time> 1426139059441</time></coord><coord><long>-122.8049467</long><lat>49.2921681</lat><ip> /192.168.1.64</ip><time> 11/03/2015 22:46:32</time></coord></coordinates>

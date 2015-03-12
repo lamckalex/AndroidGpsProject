@@ -5,18 +5,58 @@
     /*border-radius: 25px;*/
 }
 
+body {
+  padding-top: 70px;
+  background-color: #f7f7f7;
+}
+
 .map-container{
     margin: 0;
    padding: 10px;
    min-height: 500px;
-   height: 80%;
+   height: 100%;
 }
 
-.page-header{
-  text-align:center;
+.map-container-webview{
+    margin: 0;
+   padding: 10px;
+   min-height: 500px;
+   height: 40%;
+}
+
+.page-title{
+  padding: 10px;
 }
 
 .body
 {
   width:80%;
+}
+
+.rightcol
+{
+  height: 100%;
+}
+
+.leftcol
+{
+  height: 100%;
+}
+
+.navcustom
+{
+  background: #3b5998;
+}
+
+.panel-default > .panel-heading {
+  background-color: #dfe3ee;
+}
+
+.navbar-default> .navbar-text
+{
+  color: white;
+}
+
+.navbar-default .navbar-brand {
+  color: white;
 }
