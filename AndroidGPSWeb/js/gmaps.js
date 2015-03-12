@@ -18,7 +18,7 @@ function initialize() {
   });
 */
   makeTableHead();
-  addMarkers();
+  mostRecentMarkers();
 }
 
 function loadXMLDoc(filename)
@@ -36,7 +36,7 @@ function loadXMLDoc(filename)
   return xhttp.responseXML;
 }
 
-function makeTableRow(row, mac, ip, time, long, lat)
+function makeTableRow(row, ip, time, long, lat)
 {
     var table = document.getElementById("record");
     var row = table.insertRow(row+1);
@@ -70,7 +70,7 @@ function makeTableHead()
 function refresh()
 {
   removeMarkers();
-  addMarkers();
+  mostRecentMarkers();
 }
 
 function removeMarkers()
@@ -92,14 +92,12 @@ function addMarkers()
   var xmlDoc = loadXMLDoc("coordinates.xml");
   var x=xmlDoc.getElementsByTagName("coord");
 
-  for (i=0;i<x.length;i++)
+  for (var i=0;i<x.length;i++)
     {
       var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
       var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
-
       var long = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
       var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
-      var name = xmlDoc.getElementsByTagName("name")[i].childNodes[0].nodeValue;
 
       var newCoord = new google.maps.LatLng(long,lat);
 
@@ -158,7 +156,6 @@ function mostRecentMarkers()
                 var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
                 var long = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
                 var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
-                var name = xmlDoc.getElementsByTagName("name")[i].childNodes[0].nodeValue;
 
                 var newCoord = new google.maps.LatLng(long,lat);
 
@@ -170,7 +167,7 @@ function mostRecentMarkers()
 
                 markersArray.push(marker);
 
-                makeTableRow(i, ip, time, long, lat);
+                makeTableRow(j, ip, time, long, lat);
                 break;
             }
         }
@@ -191,7 +188,6 @@ function ipHistoryMarkers(givenIP)
     var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
     var long = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
     var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
-    var name = xmlDoc.getElementsByTagName("name")[i].childNodes[0].nodeValue;
 
     var newCoord = new google.maps.LatLng(long,lat);
 
