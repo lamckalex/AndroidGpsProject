@@ -8,9 +8,6 @@
 -- https://akrzemi1.wordpress.com/2011/07/13/parsing-xml-with-boost/
 -- http://www.boost.org/doc/libs/1_57_0/doc/html/property_tree.html	
 --------------------------------------------------------------------------*/
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include "xmlmanip.h"
 
 /*-----------------------------------------------------------------------
@@ -39,7 +36,7 @@ Locations readXML ( std::istream& istream )
 
 		//add values to the location
 		location.longitude = value.second.get<double>("long");
-		location.latitude = value.second.get<double>("lat);
+		location.latitude = value.second.get<double>("lat");
 		location.time = value.second.get<std::string>("time");
 		location.ip_address = value.second.get<std::string>("ip");
 

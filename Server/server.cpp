@@ -13,6 +13,8 @@
 #include <string>
 #include <string.h>
 
+#include "xmlmanip.h"
+
 //defines
 #define SERVER_TCP_PORT 7000	// Default port
 #define BUFLEN	1024				//Buffer length
@@ -30,6 +32,7 @@ struct pdata
 void readFromClient(int client_socket);
 pdata rawToPData(char* str);
 void sig_handler (int sig);
+Location pDataToLocation (pdata data);
 
 int listen_socket, new_socket;
 pdata *packet;
@@ -136,15 +139,24 @@ void readFromClient(int client_socket)
 		}
 
 
-		rawToPData(buf);
+		pdata data = rawToPData(buf);
 		fflush(stdout);
 
-		//deserialize data from port
+		//convert PData to a Location struct
+		Location location = pDataToLocation(data);
+
+		//read all the entries from the XML document to a vector of locations
+  		std::ifstream input("coords.xml");
+  		Locations locations = readXML( input );
+
+		//add the new location to the vector
+		locations.push_back(location);
+
+		//write to XML
+		std::ofstream output("output.xml");
+  		writeXML( locations, output );
 
 	}
-		
-	
-	//write the text to XML
 
 	exit(0);
 }
@@ -174,6 +186,29 @@ pdata rawToPData(char* str)
   printf("%s\n", p.pip);
   printf("%s\n", p.ptime);
 
+  return p;
+
+}
+
+/*
+
+*/
+
+Location pDataToLocation (pdata data)
+{
+	Location new_location;
+
+	//convert characters to doubles
+	double new_longitude = atof(data.plong);
+	double new_latitude =  atof(data.plat);
+
+
+	new_location.longitude = new_longitude;
+	new_location.latitude = new_latitude;
+	new_location.ip_address = data.pip;
+	new_location.time = data.ptime;
+
+	return new_location;
 }
 
 
