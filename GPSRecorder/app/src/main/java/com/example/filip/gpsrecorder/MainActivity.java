@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("http://lamckalex.ddns.net");
-      
+
 
         getDeviceIP();
     }
