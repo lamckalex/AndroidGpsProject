@@ -1,6 +1,7 @@
 var markersArray = [];
 var map;
 var refreshInterval;
+var mode;
 
 function initialize() {
   var bcitLatlng = new google.maps.LatLng(49.2504322,-122.9938279);
@@ -17,6 +18,7 @@ function initialize() {
       title: 'BCIT'
   });
 */
+  mode = "allCurrent";
   makeTableHead();
   mostRecentMarkers();
 }
@@ -70,7 +72,11 @@ function makeTableHead()
 function refresh()
 {
   removeMarkers();
-  mostRecentMarkers();
+  
+  if (mode == "allCurrent")
+    mostRecentMarkers();
+  else
+    ipHistoryMarkers(mode);
 }
 
 function removeMarkers()
@@ -178,8 +184,9 @@ function ipHistoryMarkers(givenIP)
 {
   var xmlDoc = loadXMLDoc("coordinates.xml");
   var x = xmlDoc.getElementsByTagName("coord");
-
-  for (var i = 0; i < x.length; i++)
+  var rowCounter = 0;
+  
+  for (var i = x.length-1; i >= 0; i--)
   {
     var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
     if(givenIP != ip)
@@ -190,16 +197,35 @@ function ipHistoryMarkers(givenIP)
     var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
 
     var newCoord = new google.maps.LatLng(long,lat);
-
+        
     var marker = new google.maps.Marker({
         position: newCoord,
         map: map,
         title: name
     });
 
+    // mark the latest point red, but previous points green
+    if (rowCounter == 0)
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+    else
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+    
     markersArray.push(marker);
-    makeTableRow(i, ip, time, long, lat);
+    makeTableRow(rowCounter, ip, time, long, lat);
+    rowCounter++;
   }
+}
+
+function allCurrent()
+{
+    mode = "allCurrent";
+    refresh();
+}
+
+function singleIPHistory()
+{
+    mode = document.getElementById("ipAddress").value;    
+    refresh();
 }
 
 function refreshOn()
