@@ -172,7 +172,7 @@ public class LocationUpdateService extends Service {
 
         String s;
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + l.getTime() + ", " + deviceIP;
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + l.getTime();
 
         return s;
     }

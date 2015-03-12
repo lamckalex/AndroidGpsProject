@@ -39,7 +39,7 @@ pdata *packet;
 
 int main()
 {
-	int 	retval, client_len;
+	int 	retval, client_len, status;
 	struct	sockaddr_in server, client;	
 	pid_t	pid;
 
@@ -109,6 +109,7 @@ int main()
 	close(listen_socket);
 	close(new_socket);
 
+	wait(&status);
 	return 0;
 }
 
@@ -135,6 +136,7 @@ void readFromClient(int client_socket)
 			printf("Socket: %d disconnected\n", client_socket);
 			fflush(stdout);
 			close(client_socket);
+			close(new_socket);
 			break;
 		}
 
@@ -146,19 +148,19 @@ void readFromClient(int client_socket)
 		Location location = pDataToLocation(data);
 
 		//read all the entries from the XML document to a vector of locations
-  		std::ifstream input("coords.xml");
+  		std::ifstream input("coordinates.xml");
   		Locations locations = readXML( input );
 
 		//add the new location to the vector
 		locations.push_back(location);
 
 		//write to XML
-		std::ofstream output("output.xml");
+		std::ofstream output("coordinates.xml");
   		writeXML( locations, output );
 
 	}
 
-	exit(0);
+	return;
 }
 
 /*
@@ -166,27 +168,31 @@ Alex's string to char* parser
 */
 pdata rawToPData(char* str)
 {
-  pdata p;
+	pdata p;
 
-  char * pch;
-  printf ("Splitting string \"%s\" into tokens:\n",str);
-  pch = strtok (str,",");
+	char * pch;
+	printf ("Splitting string \"%s\" into tokens:\n",str);
 
-  p.plong = pch;
-  pch = strtok (NULL, ",");
-  p.plat = pch;
-  pch = strtok (NULL, ",");
-  p.pip = pch;
-  pch = strtok (NULL, ",");
-  p.ptime = pch;
-  pch = strtok (NULL, ",");
+	pch = strtok (str,",");
+	p.plong = pch;
 
-  printf("%s\n", p.plong);
-  printf("%s\n", p.plat);
-  printf("%s\n", p.pip);
-  printf("%s\n", p.ptime);
+	pch = strtok (NULL, ",");
+	p.plat = pch;
 
-  return p;
+	pch = strtok (NULL, ",");
+	p.pip = pch;
+
+	pch = strtok (NULL, ",");
+	p.ptime = pch;
+
+	pch = strtok (NULL, ",");
+
+	printf("%s\n", p.plong);
+	printf("%s\n", p.plat);
+	printf("%s\n", p.pip);
+	printf("%s\n", p.ptime);
+
+	return p;
 
 }
 
