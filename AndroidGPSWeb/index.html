@@ -34,7 +34,7 @@
 
     <div class="col-md-6 container">
       <div class="panel panel-default">
-        <div class="panel-heading">Refresh Settings</div>
+        <div class="panel-heading">Settings</div>
         <div class="panel-body">
           <row>
             <div class="col-md-6">
@@ -50,6 +50,25 @@
                       <input type="radio" name="options" checked> Off
                   </label>
               </div>
+            </div>
+          </row>
+          <row>
+            <div class="col-md-6">
+              Display Mode:
+              <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-primary refresh-btn active" onclick="allCurrent();">
+                      <input type="radio" name="options" checked> All Current Positions
+                  </label>
+                  <label class="btn btn-primary refresh-btn" onclick="singleIPHistory();">
+                      <input type="radio" name="options"> History Of One IP
+                  </label>
+              </div>
+            </div>
+          </row>
+          <row>
+            <div class="col-md-6">
+              IP Address:
+              <input type="text" id="ipAddress"></input>
             </div>
           </row>
         </div>
