@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
     private WifiInfo wifiInfo;
 
     private InetAddress deviceIP = null;
+    private String macAddress = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +67,10 @@ public class MainActivity extends Activity {
         webView.loadUrl("http://lamckalex.ddns.net");
 
 
-        getDeviceIP();
+        getDeviceIdentity();
     }
 
-    private void getDeviceIP() {
+    private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
@@ -85,6 +86,9 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+        macAddress = wifiInfo.getMacAddress();
+
+        Log.d("DEVICE MAC ADDRESSS", macAddress);
         Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
     }
 
@@ -92,6 +96,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -325,7 +330,7 @@ public class MainActivity extends Activity {
 
         String sDate = sdf.format(d);
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate;
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress;
 
         return s;
     }
