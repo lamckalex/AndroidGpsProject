@@ -25,6 +25,7 @@ struct pdata
   char* plat;
   char* pip;
   char* ptime;
+  char* pmac;
 };
 
 //prototypes
@@ -186,11 +187,15 @@ pdata rawToPData(char* str)
 	p.ptime = pch;
 
 	pch = strtok (NULL, ",");
+	p.pmac = pch;
+
+	pch = strtok (NULL, ",");
 
 	printf("%s\n", p.plong);
 	printf("%s\n", p.plat);
 	printf("%s\n", p.pip);
 	printf("%s\n", p.ptime);
+	printf("%s\n", p.pmac);
 
 	return p;
 
@@ -213,6 +218,7 @@ Location pDataToLocation (pdata data)
 	new_location.latitude = new_latitude;
 	new_location.ip_address = data.pip;
 	new_location.time = data.ptime;
+	new_location.mac_address = data.pmac;
 
 	return new_location;
 }

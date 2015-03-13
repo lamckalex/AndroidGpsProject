@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -48,6 +49,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -64,7 +66,18 @@ public class MainActivity extends Activity {
         webView = (WebView) findViewById(R.id.webView);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://lamckalex.ddns.net");
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+
+                handler.proceed("dcomm", "bcit");
+            }
+        });
+
+        webView.loadUrl("http://lamckalex.ddns.net/GPSAssign/");
+
 
 
         getDeviceIdentity();
