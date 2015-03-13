@@ -27,8 +27,10 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -172,7 +174,12 @@ public class LocationUpdateService extends Service {
 
         String s;
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + l.getTime();
+        Date d = new Date(l.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        String sDate = sdf.format(d);
+
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate;
 
         return s;
     }

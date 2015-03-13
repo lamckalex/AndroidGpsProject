@@ -50,6 +50,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        updateBtnText(LocationUpdateService.isRunning);
+
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
@@ -62,7 +64,7 @@ public class MainActivity extends Activity {
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl("http://lamckalex.ddns.net");
-      
+
 
         getDeviceIP();
     }
