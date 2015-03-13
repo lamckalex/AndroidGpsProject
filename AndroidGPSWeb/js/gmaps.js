@@ -1,8 +1,59 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: gmaps.js - A website that takes the coordinates.xml file and displays the results with googleamaps and a table.
+--
+-- PROGRAM: Android GPS Website
+--
+-- FUNCTIONS:
+--  function initalize()
+--  function loadXMLDoc(filename)
+--  function makeTableRow(row, ip, time, longt, lat)
+--  function makeTableHead()
+--  function refresh()
+--  function removeMarkers()
+--  function addMarkers()
+--  function mostRecentMarkers()
+--  function ipHistoryMarkers(givenIP)
+--  function allCurrent()
+--  function singleIPHistory()
+--  function refreshOn()
+--  function refreshOff()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- NOTES:
+-- The site needs to be hosted on apache for it to work, just loading it via double clicking it does not work since
+-- xml parsing needs it tob e hosted.
+----------------------------------------------------------------------------------------------------------------------*/
+
 var markersArray = [];
 var map;
 var refreshInterval;
 var mode;
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function initialize()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: initialize()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Creates the map and centers it to bcit
+----------------------------------------------------------------------------------------------------------------------*/
 function initialize() {
   var bcitLatlng = new google.maps.LatLng(49.2504322,-122.9938279);
   var mapOptions = {
@@ -17,6 +68,24 @@ function initialize() {
   mostRecentMarkers();
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function loadXMLDoc(filename)
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function loadXMLDoc(filename)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Loads the xml file
+----------------------------------------------------------------------------------------------------------------------*/
 function loadXMLDoc(filename)
 {
   if (window.XMLHttpRequest)
@@ -32,6 +101,24 @@ function loadXMLDoc(filename)
   return xhttp.responseXML;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function makeTableRow(row, ip, time, longt, lat)
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function makeTableRow(row, ip, time, longt, lat)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Creates a row in the table
+----------------------------------------------------------------------------------------------------------------------*/
 function makeTableRow(row, ip, time, longt, lat)
 {
     var table = document.getElementById("record");
@@ -47,6 +134,24 @@ function makeTableRow(row, ip, time, longt, lat)
     cell4.innerHTML = Number(lat).toFixed(4);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function makeTableHead()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function makeTableHead()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Creates the table header on the site
+----------------------------------------------------------------------------------------------------------------------*/
 function makeTableHead()
 {
   var table = document.getElementById("record");
@@ -56,23 +161,59 @@ function makeTableHead()
   var cell2 = row.insertCell(1);
   var cell3 = row.insertCell(2);
   var cell4 = row.insertCell(3);
-  
+
   cell1.innerHTML = "<b>IP</b>";
   cell2.innerHTML = "<b>TIME</b>";
   cell3.innerHTML = "<b>LONG</b>";
   cell4.innerHTML = "<b>LAT</b>";
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function refresh()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function refresh()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Removes all markers and re-populates them
+----------------------------------------------------------------------------------------------------------------------*/
 function refresh()
 {
   removeMarkers();
-  
+
   if (mode == "allCurrent")
     mostRecentMarkers();
   else
     ipHistoryMarkers(mode);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function removeMarkers()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function removeMarkers()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Remove all markers
+----------------------------------------------------------------------------------------------------------------------*/
 function removeMarkers()
 {
   var myTable = document.getElementById("record");
@@ -87,6 +228,27 @@ function removeMarkers()
   markersArray.length = 0;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function addMarkers()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function addMarkers()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Add markers from the coordinates file
+-- No longer used, replaced with
+--    function mostRecentMarkers()
+--    function ipHistoryMarkers(givenIP)
+----------------------------------------------------------------------------------------------------------------------*/
 function addMarkers()
 {
   var xmlDoc = loadXMLDoc("coordinates.xml");
@@ -113,19 +275,38 @@ function addMarkers()
     }
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function mostRecentMarkers()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Sanders Lee
+--
+-- PROGRAMMER: Sanders Lee
+--
+-- INTERFACE: function mostRecentMarkers()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Gets most recent markers per ip address
+-- based on Alex's function addMarkers()
+----------------------------------------------------------------------------------------------------------------------*/
 function mostRecentMarkers()
 {
     var xmlDoc = loadXMLDoc("coordinates.xml");
     var x = xmlDoc.getElementsByTagName("coord");
-    
+
     var uniqueIPs = [];
     var uniqueCount = 0;
-    
+
     // this for loop produces a list of unique IP addresses
     for (var i = x.length-1; i >= 0; i--)
     {
         var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
-        var matchFound = false;        
+        var matchFound = false;
         if (i != x.length-1)
         {
             var matchFound = false;
@@ -137,14 +318,14 @@ function mostRecentMarkers()
                     break;
                 }
             }
-        }        
+        }
         if (!matchFound)
         {
             uniqueIPs[uniqueCount] = ip;
             uniqueCount++;
         }
     }
-    
+
     // get latest information on each unique IP address
     for (var j = 0; j < uniqueCount; j++)
     {
@@ -171,27 +352,46 @@ function mostRecentMarkers()
                 break;
             }
         }
-    }    
+    }
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function ipHistoryMarkers(givenIP)
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Sanders Lee
+--
+-- PROGRAMMER: Sanders Lee
+--
+-- INTERFACE: function ipHistoryMarkers(givenIP)
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Gets all markers based on the given ip address
+-- based on Alex's function addMarkers()
+----------------------------------------------------------------------------------------------------------------------*/
 function ipHistoryMarkers(givenIP)
 {
   var xmlDoc = loadXMLDoc("coordinates.xml");
   var x = xmlDoc.getElementsByTagName("coord");
   var rowCounter = 0;
-  
+
   for (var i = x.length-1; i >= 0; i--)
   {
     var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
     if(givenIP != ip)
         continue;
-        
+
     var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
     var longt = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
     var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
 
     var newCoord = new google.maps.LatLng(lat,longt);
-        
+
     var marker = new google.maps.Marker({
         position: newCoord,
         map: map,
@@ -210,23 +410,95 @@ function ipHistoryMarkers(givenIP)
   }
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function allCurrent()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Sanders Lee
+--
+-- PROGRAMMER: Sanders Lee
+--
+-- INTERFACE: function allCurrent()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Changes the mode of the website to all current mode.
+----------------------------------------------------------------------------------------------------------------------*/
 function allCurrent()
 {
     mode = "allCurrent";
     refresh();
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function singleIPHistory()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Sanders Lee
+--
+-- PROGRAMMER: Sanders Lee
+--
+-- INTERFACE: function singleIPHistory()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Changes the mod of the website to single ip mode.
+----------------------------------------------------------------------------------------------------------------------*/
 function singleIPHistory()
 {
-    mode = " "+document.getElementById("ipAddress").value;    
+    mode = " "+document.getElementById("ipAddress").value;
     refresh();
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function refreshOn()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function refreshOn()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Sets the website to refresh the markers
+----------------------------------------------------------------------------------------------------------------------*/
 function refreshOn()
 {
   refreshInterval = setInterval(function () {refresh()}, 1000);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: function refreshOff()
+--
+-- DATE: March 13, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Alex Lam
+--
+-- PROGRAMMER: Alex Lam
+--
+-- INTERFACE: function refreshOff()
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Disables refresh interval
+----------------------------------------------------------------------------------------------------------------------*/
 function refreshOff()
 {
   clearInterval(refreshInterval);
