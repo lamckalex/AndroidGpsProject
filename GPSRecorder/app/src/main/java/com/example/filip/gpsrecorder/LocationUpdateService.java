@@ -53,6 +53,8 @@ public class LocationUpdateService extends Service {
 
     private InetAddress deviceIP = null;
 
+    private String macAddress = null;
+
     @Override
     public void onCreate() {
 
@@ -83,7 +85,7 @@ public class LocationUpdateService extends Service {
 
         new RequestConnection().execute();
 
-        getDeviceIP();
+        getDeviceIdentity();
 
         startLocationDiscovery();
 
@@ -98,7 +100,7 @@ public class LocationUpdateService extends Service {
         return START_STICKY;
     }
 
-    private void getDeviceIP() {
+    private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
@@ -114,6 +116,9 @@ public class LocationUpdateService extends Service {
             e.printStackTrace();
         }
 
+        macAddress = wifiInfo.getMacAddress();
+
+        Log.d("DEVICE MAC ADDRESSS", macAddress);
         Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
     }
 
@@ -179,7 +184,7 @@ public class LocationUpdateService extends Service {
 
         String sDate = sdf.format(d);
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate;
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress;
 
         return s;
     }

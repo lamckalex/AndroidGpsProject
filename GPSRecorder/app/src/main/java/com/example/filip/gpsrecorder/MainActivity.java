@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -44,9 +45,11 @@ public class MainActivity extends Activity {
     private WifiInfo wifiInfo;
 
     private InetAddress deviceIP = null;
+    private String macAddress = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -63,13 +66,24 @@ public class MainActivity extends Activity {
         webView = (WebView) findViewById(R.id.webView);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://lamckalex.ddns.net");
+
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+
+                handler.proceed("dcomm", "bcit");
+            }
+        });
+
+        webView.loadUrl("http://lamckalex.ddns.net/GPSAssign/");
 
 
-        getDeviceIP();
+
+        getDeviceIdentity();
     }
 
-    private void getDeviceIP() {
+    private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
@@ -85,6 +99,9 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+        macAddress = wifiInfo.getMacAddress();
+
+        Log.d("DEVICE MAC ADDRESSS", macAddress);
         Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
     }
 
@@ -92,6 +109,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -325,7 +343,7 @@ public class MainActivity extends Activity {
 
         String sDate = sdf.format(d);
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate;
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress;
 
         return s;
     }
