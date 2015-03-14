@@ -111,15 +111,16 @@ function loadXMLDoc(filename)
 -- DESIGNER: Alex Lam
 --
 -- PROGRAMMER: Alex Lam
+--             Sanders Lee
 --
--- INTERFACE: function makeTableRow(row, ip, time, longt, lat)
+-- INTERFACE: function makeTableRow(row, mac, ip, time, longt, lat)
 --
 -- RETURNS: void
 --
 -- NOTES:
 -- Creates a row in the table
 ----------------------------------------------------------------------------------------------------------------------*/
-function makeTableRow(row, ip, time, longt, lat)
+function makeTableRow(row, mac, ip, time, longt, lat)
 {
     var table = document.getElementById("record");
     var row = table.insertRow(row+1);
@@ -127,11 +128,13 @@ function makeTableRow(row, ip, time, longt, lat)
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
     var cell4 = row.insertCell(3);
-
-    cell1.innerHTML = ip;
-    cell2.innerHTML = time;
-    cell3.innerHTML = Number(longt).toFixed(4);
-    cell4.innerHTML = Number(lat).toFixed(4);
+    var cell5 = row.insertCell(4);
+    
+    cell1.innerHTML = mac;
+    cell2.innerHTML = ip;
+    cell3.innerHTML = time;
+    cell4.innerHTML = Number(longt).toFixed(4);
+    cell5.innerHTML = Number(lat).toFixed(4);
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -144,6 +147,7 @@ function makeTableRow(row, ip, time, longt, lat)
 -- DESIGNER: Alex Lam
 --
 -- PROGRAMMER: Alex Lam
+--             Sanders Lee
 --
 -- INTERFACE: function makeTableHead()
 --
@@ -161,11 +165,13 @@ function makeTableHead()
   var cell2 = row.insertCell(1);
   var cell3 = row.insertCell(2);
   var cell4 = row.insertCell(3);
-
-  cell1.innerHTML = "<b>IP</b>";
-  cell2.innerHTML = "<b>TIME</b>";
-  cell3.innerHTML = "<b>LONG</b>";
-  cell4.innerHTML = "<b>LAT</b>";
+  var cell5 = row.insertCell(4);
+  
+  cell1.innerHTML = "<b>MAC</b>";
+  cell2.innerHTML = "<b>IP</b>";
+  cell3.innerHTML = "<b>TIME</b>";
+  cell4.innerHTML = "<b>LONG</b>";
+  cell5.innerHTML = "<b>LAT</b>";
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -193,7 +199,7 @@ function refresh()
   if (mode == "allCurrent")
     mostRecentMarkers();
   else
-    ipHistoryMarkers(mode);
+    macHistoryMarkers(mode);
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -291,7 +297,7 @@ function addMarkers()
 -- RETURNS: void
 --
 -- NOTES:
--- Gets most recent markers per ip address
+-- Gets most recent markers per MAC address
 -- based on Alex's function addMarkers()
 ----------------------------------------------------------------------------------------------------------------------*/
 function mostRecentMarkers()
@@ -299,20 +305,20 @@ function mostRecentMarkers()
     var xmlDoc = loadXMLDoc("coordinates.xml");
     var x = xmlDoc.getElementsByTagName("coord");
 
-    var uniqueIPs = [];
+    var uniqueMACs = [];
     var uniqueCount = 0;
 
-    // this for loop produces a list of unique IP addresses
+    // this for loop produces a list of unique MAC addresses
     for (var i = x.length-1; i >= 0; i--)
     {
-        var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
+        var mac = xmlDoc.getElementsByTagName("mac")[i].childNodes[0].nodeValue;
         var matchFound = false;
         if (i != x.length-1)
         {
             var matchFound = false;
             for (var j = 0; j < uniqueCount; j++)
             {
-                if (ip == uniqueIPs[j])
+                if (mac == uniqueMACs[j])
                 {
                     matchFound = true;
                     break;
@@ -321,19 +327,20 @@ function mostRecentMarkers()
         }
         if (!matchFound)
         {
-            uniqueIPs[uniqueCount] = ip;
+            uniqueMACs[uniqueCount] = mac;
             uniqueCount++;
         }
     }
 
-    // get latest information on each unique IP address
+    // get latest information on each unique MAC address
     for (var j = 0; j < uniqueCount; j++)
     {
         for (var i = x.length-1; i >= 0; i--)
         {
-            var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
-            if (ip == uniqueIPs[j])
+            var mac = xmlDoc.getElementsByTagName("mac")[i].childNodes[0].nodeValue;
+            if (mac == uniqueMACs[j])
             {
+                var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
                 var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
                 var longt = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
                 var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
@@ -348,7 +355,7 @@ function mostRecentMarkers()
 
                 markersArray.push(marker);
 
-                makeTableRow(j, ip, time, longt, lat);
+                makeTableRow(j, mac, ip, time, longt, lat);
                 break;
             }
         }
@@ -356,7 +363,7 @@ function mostRecentMarkers()
 }
 
 /*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: function ipHistoryMarkers(givenIP)
+-- FUNCTION: function macHistoryMarkers(givenMAC)
 --
 -- DATE: March 13, 2015
 --
@@ -366,15 +373,15 @@ function mostRecentMarkers()
 --
 -- PROGRAMMER: Sanders Lee
 --
--- INTERFACE: function ipHistoryMarkers(givenIP)
+-- INTERFACE: function macHistoryMarkers(givenMAC)
 --
 -- RETURNS: void
 --
 -- NOTES:
--- Gets all markers based on the given ip address
+-- Gets all markers based on the given MAC address
 -- based on Alex's function addMarkers()
 ----------------------------------------------------------------------------------------------------------------------*/
-function ipHistoryMarkers(givenIP)
+function macHistoryMarkers(givenMAC)
 {
   var xmlDoc = loadXMLDoc("coordinates.xml");
   var x = xmlDoc.getElementsByTagName("coord");
@@ -382,10 +389,11 @@ function ipHistoryMarkers(givenIP)
 
   for (var i = x.length-1; i >= 0; i--)
   {
-    var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
-    if(givenIP != ip)
+    var mac = xmlDoc.getElementsByTagName("mac")[i].childNodes[0].nodeValue;
+    if(givenMAC != mac)
         continue;
-
+        
+    var ip = xmlDoc.getElementsByTagName("ip")[i].childNodes[0].nodeValue;
     var time = xmlDoc.getElementsByTagName("time")[i].childNodes[0].nodeValue;
     var longt = xmlDoc.getElementsByTagName("long")[i].childNodes[0].nodeValue;
     var lat = xmlDoc.getElementsByTagName("lat")[i].childNodes[0].nodeValue;
@@ -405,7 +413,7 @@ function ipHistoryMarkers(givenIP)
         marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
 
     markersArray.push(marker);
-    makeTableRow(rowCounter, ip, time, longt, lat);
+    makeTableRow(rowCounter, mac, ip, time, longt, lat);
     rowCounter++;
   }
 }
@@ -435,7 +443,7 @@ function allCurrent()
 }
 
 /*------------------------------------------------------------------------------------------------------------------
--- FUNCTION: function singleIPHistory()
+-- FUNCTION: function singleMACHistory()
 --
 -- DATE: March 13, 2015
 --
@@ -445,14 +453,14 @@ function allCurrent()
 --
 -- PROGRAMMER: Sanders Lee
 --
--- INTERFACE: function singleIPHistory()
+-- INTERFACE: function singleMACHistory()
 --
 -- RETURNS: void
 --
 -- NOTES:
--- Changes the mod of the website to single ip mode.
+-- Changes the mode of the website to single MAC mode.
 ----------------------------------------------------------------------------------------------------------------------*/
-function singleIPHistory()
+function singleMACHistory()
 {
     mode = " "+document.getElementById("ipAddress").value;
     refresh();
