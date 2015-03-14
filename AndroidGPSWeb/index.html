@@ -1,22 +1,3 @@
-/*------------------------------------------------------------------------------------------------------------------
--- SOURCE FILE: index.html - A website that takes the coordinates.xml file and displays the results with googleamaps and a table.
---
--- PROGRAM: Android GPS Website
---
--- FUNCTIONS:
---
--- DATE: March 13, 2015
---
--- REVISIONS: (Date and Description)
---
--- DESIGNER: Alex Lam
---
--- PROGRAMMER: Alex Lam
---
--- NOTES:
--- The site needs to be hosted on apache for it to work, just loading it via double clicking it does not work since
--- xml parsing needs it tob e hosted.
-----------------------------------------------------------------------------------------------------------------------*/
 <!DOCTYPE html>
 <html>
   <head>
@@ -39,11 +20,12 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-default navbar-fixed-top navcustom">
-      <a class="navbar-brand" href="#">AndroidGPS Project</a>
-      <p class="navbar-text">By Alex Lam, Filip Gutica, Sanders Lee, Sebastian Pelka</p>
-
-    </nav>
+    <header>
+      <div class="page-header">
+        <h1>Android GPS Assignment</h1>
+        <h2>Track your friends!</h2>
+      </div>
+    </header>
 
     <row>
     <div class="col-md-6 container map-container">
@@ -70,7 +52,6 @@
               </div>
             </div>
           </row>
-
           <row>
             <div class="col-md-6">
               Display Mode:
@@ -78,14 +59,16 @@
                   <label class="btn btn-primary refresh-btn active" onclick="allCurrent();">
                       <input type="radio" name="options" checked> All Current Positions
                   </label>
-                  <label class="btn btn-primary refresh-btn" onclick="singleIPHistory();">
-                      <input type="radio" name="options"> History Of One IP
+                  <label class="btn btn-primary refresh-btn" onclick="singleMACHistory();">
+                      <input type="radio" name="options"> History Of One MAC
                   </label>
               </div>
             </div>
+          </row>
+          <row>
             <div class="col-md-6">
-              IP Address:
-              <input type="text" id="ipAddress"></input>
+              MAC Address:
+              <input type="text" id="macAddress"></input>
             </div>
           </row>
         </div>
