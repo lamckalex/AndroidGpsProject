@@ -66,7 +66,6 @@ void writeXML ( Locations locationList, std::ostream& ostream )
 	{
 		ptree& node = location_data.add("coordinates.coord", "");
 
-
 		node.put("long", location.longitude);
 		node.put("lat", location.latitude);
 		node.put("ip", location.ip_address);
