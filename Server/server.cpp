@@ -115,7 +115,6 @@ int main()
 		{
 			//child code
 			readFromClient(new_socket);
-
 		}
 	}
 
@@ -175,7 +174,6 @@ void readFromClient(int client_socket)
 			close(new_socket);
 			break;
 		}
-
 
 		pdata data = rawToPData(buf);
 		fflush(stdout);
