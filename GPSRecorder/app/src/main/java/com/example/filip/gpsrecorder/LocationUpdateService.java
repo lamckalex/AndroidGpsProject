@@ -27,8 +27,10 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,6 +52,8 @@ public class LocationUpdateService extends Service {
     private WifiInfo wifiInfo;
 
     private InetAddress deviceIP = null;
+
+    private String macAddress = null;
 
     @Override
     public void onCreate() {
@@ -81,7 +85,7 @@ public class LocationUpdateService extends Service {
 
         new RequestConnection().execute();
 
-        getDeviceIP();
+        getDeviceIdentity();
 
         startLocationDiscovery();
 
@@ -96,7 +100,7 @@ public class LocationUpdateService extends Service {
         return START_STICKY;
     }
 
-    private void getDeviceIP() {
+    private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
@@ -112,6 +116,9 @@ public class LocationUpdateService extends Service {
             e.printStackTrace();
         }
 
+        macAddress = wifiInfo.getMacAddress();
+
+        Log.d("DEVICE MAC ADDRESSS", macAddress);
         Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
     }
 
@@ -172,7 +179,12 @@ public class LocationUpdateService extends Service {
 
         String s;
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + l.getTime();
+        Date d = new Date(l.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        String sDate = sdf.format(d);
+
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress;
 
         return s;
     }
@@ -183,7 +195,7 @@ public class LocationUpdateService extends Service {
         @Override
         protected String doInBackground(Object... params) {
 
-            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
+            String ip = sharedpreferences.getString("IP_ADDR", "lamckalex.ddns.net");
             int port = sharedpreferences.getInt("PORT", 7000);
 
             Log.d("server ip", ip);

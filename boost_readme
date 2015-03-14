@@ -6,7 +6,7 @@ GENERIC COMPILE EXAMPLE:
 g++ -I path/to/boost_1_57_0 example.cpp -o example
 
 HOW I COMPILED:
-g++ -I/boost1_57_0 *.cpp -o server2
+g++ -I/boost_1_57_0 *.cpp -o server2
 
 yeah i used wildcard.
 
