@@ -51,7 +51,7 @@ public class LocationUpdateService extends Service {
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
 
-    private InetAddress deviceIP = null;
+    private String deviceIP = null;
 
     private String macAddress = null;
 
@@ -100,26 +100,39 @@ public class LocationUpdateService extends Service {
         return START_STICKY;
     }
 
+    /*************************************************************************************
+     * Function: getDeviceIdentity()
+     *
+     * DATE: March 13, 2015
+     *
+     * DESIGNER:	Filip Gutica
+     *
+     * PROGRAMMER:	Filip Gutica
+     *
+     * INTERFACE:	getDeviceIdentity()
+     *
+     * PARAMETERS:
+     *          void
+     *
+     * RETURNS:	void
+     *
+     * NOTES:
+     * gets and sets the ip and MAC addresses of the device to be sent along with location
+     * info to the server.
+     *************************************************************************************/
     private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
 
         int ipAddress = wifiInfo.getIpAddress();
-        byte[] bytes = BigInteger.valueOf(ipAddress).toByteArray();
 
-        reverse(bytes);
-
-        try {
-            deviceIP = InetAddress.getByAddress(bytes);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        deviceIP = android.text.format.Formatter.formatIpAddress(ipAddress);
 
         macAddress = wifiInfo.getMacAddress();
 
         Log.d("DEVICE MAC ADDRESSS", macAddress);
-        Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
+        Log.d("DEVICE IP ADDRESS: ", deviceIP);
     }
 
     private void startLocationDiscovery() {
@@ -294,26 +307,6 @@ public class LocationUpdateService extends Service {
             e.printStackTrace();
         }
         super.onDestroy();
-    }
-
-    /**
-     *
-     * @param array
-     */
-    private void reverse(byte[] array) {
-        if (array == null) {
-            return;
-        }
-        int i = 0;
-        int j = array.length - 1;
-        byte tmp;
-        while (j > i) {
-            tmp = array[j];
-            array[j] = array[i];
-            array[i] = tmp;
-            j--;
-            i++;
-        }
     }
 
 }
