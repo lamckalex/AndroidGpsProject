@@ -100,6 +100,58 @@ public class LocationUpdateService extends Service {
         return START_STICKY;
     }
 
+    // Handler that receives messages from the thread
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            // Normally we would do some work here, like download a file.
+            // For our sample, we just sleep for 5 seconds.
+            long endTime = System.currentTimeMillis() + 5*1000;
+            int count = 0;
+            while (System.currentTimeMillis() < endTime) {
+                synchronized (this) {
+                    try {
+                        //Log.d("", "running service" + count++);
+                        //wait(endTime - System.currentTimeMillis());
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            // Stop the service using the startId, so that we don't stop
+            // the service in the middle of handling another job
+            //stopSelf(msg.arg1);
+        }
+    }
+
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
+    /**
+     *
+     */
+    @Override
+    public void onDestroy() {
+
+        Toast.makeText(this, "Broadcasting stopped", Toast.LENGTH_SHORT).show();
+        isRunning = false;
+        mServiceLooper.quit();
+        locationManager.removeUpdates(locationListener);
+        try {
+            if (clientSocket != null)
+                clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
+    }
+
     /*************************************************************************************
      * Function: getDeviceIdentity()
      *
@@ -257,56 +309,6 @@ public class LocationUpdateService extends Service {
 
     }
 
-    // Handler that receives messages from the thread
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-            long endTime = System.currentTimeMillis() + 5*1000;
-            int count = 0;
-            while (System.currentTimeMillis() < endTime) {
-                synchronized (this) {
-                    try {
-                        //Log.d("", "running service" + count++);
-                        //wait(endTime - System.currentTimeMillis());
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            //stopSelf(msg.arg1);
-        }
-    }
 
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
-    /**
-     *
-     */
-    @Override
-    public void onDestroy() {
-
-        Toast.makeText(this, "Broadcasting stopped", Toast.LENGTH_SHORT).show();
-        isRunning = false;
-        mServiceLooper.quit();
-        locationManager.removeUpdates(locationListener);
-        try {
-            if (clientSocket != null)
-                clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        super.onDestroy();
-    }
 
 }
