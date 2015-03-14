@@ -1,55 +1,60 @@
-/*****************************************************************************************************
-**	SOURCE FILE:	server.cpp		source file for the server.exe which listens for client connections
-**									receives packet containing location info, parses the packet and then
-**									generates an XML file to be read by the website and displayed on a map
-**									and in a table.
-**	 	
-**	PROGRAM:	server
+/*******************************************************************************************************
+** SOURCE FILE: server.cpp
 **
-**	FUNCTIONS:
-**		void readFromClient(int client_socket);
-**		pdata rawToPData(char* str);
-**		void sig_handler (int sig);
-**		Location pDataToLocation (pdata data);
+** PROGRAM:		AndroidGps
 **
-**	DATE: 		March 13, 2015
+** REVISIONS:	Filip Gutica		interfacing tghe server code with the android app
+**				Alex Lam			wrote code to parse gps data into a struct for handling
+**				Sebastian Pelka		interfaced the server with XML reading and writing
 **
+** DESIGNER:	Sebastian Pelka A00870247
 **
-**	DESIGNERS: 	Sebastian Pelka 
-**				Sanders Lee
+** PROGRAMMER:	Sebastian Pelka A00870247
 **
-**	PROGRAMMER: Sebastian Pelka
-**				Sanders Lee
-**
-**	NOTES:
-** 
-*********************************************************************************************************/
-#include "server.h"
+** NOTES:
+** standard server code, the server listens for connections from any IP address and forks a child
+** process to handle each new incoming event.
+******************************************************************************************************/
+
+#include <cstdio>
+#include <netdb.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <errno.h>
+#include <cstring>
+#include <arpa/inet.h>
+#include <cstdlib>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <string>
+#include <string.h>
+
+#include "xmlmanip.h"
+
+//defines
+#define SERVER_TCP_PORT 7000	// Default port
+#define BUFLEN	1024				//Buffer length
+
+struct pdata
+{
+  char* plong;
+  char* plat;
+  char* pip;
+  char* ptime;
+};
+
+//prototypes
+
+void readFromClient(int client_socket);
+pdata rawToPData(char* str);
+void sig_handler (int sig);
+Location pDataToLocation (pdata data);
 
 int listen_socket, new_socket;
 pdata *packet;
 
-/*********************************************************************
-** Function: main
-**
-** DATE: March 13, 2015
-**
-** DESIGNER:	Sebastian Pelka
-**				Sanders Lee 
-**
-** PROGRAMMER:	Sebastian Pelka
-**				Sanders Lee
-**
-** INTERFACE:	main()
-**
-** RETURNS:	void
-**
-** NOTES:
-** Main entry point of the program. Creates a Listen socket 
-** to listen for connections. When a connection occurs it forks a new
-** process and passes the new accepted socket to the read from client
-** function which handles the client connection.
-***********************************************************************/
 int main()
 {
 	int 	retval, client_len, status;
@@ -115,6 +120,7 @@ int main()
 		{
 			//child code
 			readFromClient(new_socket);
+
 		}
 	}
 
@@ -125,29 +131,9 @@ int main()
 	return 0;
 }
 
-/*********************************************************************
-** Function: readFromClient(int)
-**
-** DATE: March 13, 2015
-**
-** DESIGNER:	Sebastian Pelka
-**				Filip Gutica
-**
-** PROGRAMMER:	Sebastian Pelka
-**				Filip Gutica
-**
-** INTERFACE:	readFromClient(int)
-**
-** PARAMETERS:
-**			client_socket		- New socket to read from
-**
-** RETURNS:	void
-**
-** NOTES:
-** Continuosly reads the client_socket until it is disconnected. Converts
-** the received raw data into a pData struct which contains longitude,
-** latitude, ip address, time, and mac address. 
-***********************************************************************/
+/*
+*
+*/
 void readFromClient(int client_socket)
 {
 	int n, bytes_to_read;
@@ -175,6 +161,7 @@ void readFromClient(int client_socket)
 			break;
 		}
 
+
 		pdata data = rawToPData(buf);
 		fflush(stdout);
 
@@ -197,32 +184,25 @@ void readFromClient(int client_socket)
 	return;
 }
 
-
-/*********************************************************************
-** Function: rawToPData(char*)
+/********************************************************************************************************
+** FUNCTION:	rawToPData
 **
-** DATE: March 13, 2015
+** DATE:		March 11, 2015
+**
+** REVISIONS:	none
 **
 ** DESIGNER:	Alex Lam
 **
 ** PROGRAMMER:	Alex Lam
 **
-** INTERFACE:	rawToPData(char*)
+** INTERFACE:	pdata rawToPData(char* str)
 **
-** PARAMETERS:
-**			str		- char pointer to be converted to a pData struct
+** PARAMS:		str 	-a raw string containing all the GPS data sent from the Android device to the server
 **
-** REVISIONS:
-**			March 13, 2015 		-Modified by Filip to handle a fifth
-**								 element: mad address
+** RETURNS:		a pdata struct, which contains all information from the string, now separated into individual
+**              character arrays
 **
-** RETURNS:	pData
-**
-** NOTES:
-** Splits the received char pointer on comma into 5 separate strings:
-** longitude, latitude, ip, time and mac address. Builds the pData struct
-** using the tokens and returns it.
-***********************************************************************/
+*********************************************************************************************************/
 pdata rawToPData(char* str)
 {
 	pdata p;
@@ -243,45 +223,37 @@ pdata rawToPData(char* str)
 	p.ptime = pch;
 
 	pch = strtok (NULL, ",");
-	p.pmac = pch;
-
-	pch = strtok (NULL, ",");
 
 	printf("%s\n", p.plong);
 	printf("%s\n", p.plat);
 	printf("%s\n", p.pip);
 	printf("%s\n", p.ptime);
-	printf("%s\n", p.pmac);
 
 	return p;
 
 }
 
-/*********************************************************************
-** Function: pDataToLocation(pdata data)
+/*******************************************************************************************************
+** FUNCTION: 	pDataToLocation
 **
-** DATE: March 13, 2015
+** DATE:		March 11, 2015
 **
-** DESIGNER:	Sebastian Pelka
+** REVISIONS:	
 **
-** PROGRAMMER:	Sebastian Pelka
+** DESIGNER:	Sebastian Pelka A00870247
 **
-** INTERFACE:	rawToPData(char*)
+** PROGRAMMER:	Sebastian Pelka A00870247
 **
-** PARAMETERS:
-**			str		- char pointer to be converted to a pData struct
+** INTERFACE:	Location pDataToLocation (pdata data)
 **
-** REVISIONS:
-**			March 13, 2015 		-Modified by Filip to handle a fifth
-**								 element: mad address
+** Params:		data 	-a structure of GPS data in character format
 **
-** RETURNS:	pData
+** RETURNS:		a Location struct, which is read into an XML document
 **
 ** NOTES:
-** Splits the received char pointer on comma into 5 separate strings:
-** longitude, latitude, ip, time and mac address. Builds the pData struct
-** using the tokens and returns it.
-***********************************************************************/
+** reads data in from a pdata struct, converts numerical values to doubles, and returns the new struct
+******************************************************************************************************/
+
 Location pDataToLocation (pdata data)
 {
 	Location new_location;
@@ -295,13 +267,12 @@ Location pDataToLocation (pdata data)
 	new_location.latitude = new_latitude;
 	new_location.ip_address = data.pip;
 	new_location.time = data.ptime;
-	new_location.mac_address = data.pmac;
 
 	return new_location;
 }
 
 
-/**************************************************************************
+/*******************************************************************************************************
 ** Function: 	sig_handler
 **
 ** DATE:		February 11, 2015
@@ -320,7 +291,7 @@ Location pDataToLocation (pdata data)
 **
 ** NOTES:
 ** Removes the Message Queue on a SIGINT signal
-*****************************************************************************/
+******************************************************************************************************/
 void sig_handler (int sig)
 {
 	int status;

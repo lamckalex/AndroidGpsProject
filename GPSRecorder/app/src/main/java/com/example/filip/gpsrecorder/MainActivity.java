@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -27,6 +28,8 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends Activity {
@@ -42,29 +45,45 @@ public class MainActivity extends Activity {
     private WifiInfo wifiInfo;
 
     private InetAddress deviceIP = null;
+    private String macAddress = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        updateBtnText(LocationUpdateService.isRunning);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         sharedpreferences = getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
-        editor.putString("IP_ADDR", "92.48.9.41");
+        editor.putString("IP_ADDR", "lamckalex.ddns.net");
         editor.putInt("PORT", 7000);
         editor.commit();
 
         webView = (WebView) findViewById(R.id.webView);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl("http://lamckalex.ddns.net/webview");
 
-        getDeviceIP();
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public void onReceivedHttpAuthRequest(WebView view, HttpAuthHandler handler, String host, String realm) {
+
+                handler.proceed("dcomm", "bcit");
+            }
+        });
+
+        webView.loadUrl("http://lamckalex.ddns.net/GPSAssign/");
+
+
+
+        getDeviceIdentity();
     }
 
-    private void getDeviceIP() {
+    private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
@@ -80,6 +99,9 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
+        macAddress = wifiInfo.getMacAddress();
+
+        Log.d("DEVICE MAC ADDRESSS", macAddress);
         Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
     }
 
@@ -87,6 +109,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -235,7 +258,7 @@ public class MainActivity extends Activity {
         @Override
         protected String doInBackground(Object... params) {
 
-            String ip = sharedpreferences.getString("IP_ADDR", "92.48.9.41");
+            String ip = sharedpreferences.getString("IP_ADDR", "lamckalex.ddns.net");
             int port = sharedpreferences.getInt("PORT", 7000);
 
             Log.d("server ip", ip);
@@ -315,7 +338,12 @@ public class MainActivity extends Activity {
 
         String s;
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + l.getTime() + ", " + deviceIP;
+        Date d = new Date(l.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        String sDate = sdf.format(d);
+
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress;
 
         return s;
     }
