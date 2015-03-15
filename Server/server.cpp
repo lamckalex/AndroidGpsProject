@@ -297,6 +297,8 @@ Location pDataToLocation (pdata data)
 	new_location.latitude = new_latitude;
 	new_location.ip_address = data.pip;
 	new_location.time = data.ptime;
+    if (strlen(data.pmac) >= 18)
+        data.pmac[18] = '\0';
 	new_location.mac_address = data.pmac;
 
 	return new_location;
