@@ -51,7 +51,7 @@ public class LocationUpdateService extends Service {
     private WifiManager wifiManager;
     private WifiInfo wifiInfo;
 
-    private InetAddress deviceIP = null;
+    private String deviceIP = null;
 
     private String macAddress = null;
 
@@ -100,26 +100,91 @@ public class LocationUpdateService extends Service {
         return START_STICKY;
     }
 
+    // Handler that receives messages from the thread
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            // Normally we would do some work here, like download a file.
+            // For our sample, we just sleep for 5 seconds.
+            long endTime = System.currentTimeMillis() + 5*1000;
+            int count = 0;
+            while (System.currentTimeMillis() < endTime) {
+                synchronized (this) {
+                    try {
+                        //Log.d("", "running service" + count++);
+                        //wait(endTime - System.currentTimeMillis());
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            // Stop the service using the startId, so that we don't stop
+            // the service in the middle of handling another job
+            //stopSelf(msg.arg1);
+        }
+    }
+
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
+    /**
+     *
+     */
+    @Override
+    public void onDestroy() {
+
+        Toast.makeText(this, "Broadcasting stopped", Toast.LENGTH_SHORT).show();
+        isRunning = false;
+        mServiceLooper.quit();
+        locationManager.removeUpdates(locationListener);
+        try {
+            if (clientSocket != null)
+                clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
+    }
+
+    /*************************************************************************************
+     * Function: getDeviceIdentity()
+     *
+     * DATE: March 13, 2015
+     *
+     * DESIGNER:	Filip Gutica
+     *
+     * PROGRAMMER:	Filip Gutica
+     *
+     * INTERFACE:	getDeviceIdentity()
+     *
+     * PARAMETERS:
+     *          void
+     *
+     * RETURNS:	void
+     *
+     * NOTES:
+     * gets and sets the ip and MAC addresses of the device to be sent along with location
+     * info to the server.
+     *************************************************************************************/
     private void getDeviceIdentity() {
 
         wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
         wifiInfo = wifiManager.getConnectionInfo();
 
         int ipAddress = wifiInfo.getIpAddress();
-        byte[] bytes = BigInteger.valueOf(ipAddress).toByteArray();
 
-        reverse(bytes);
-
-        try {
-            deviceIP = InetAddress.getByAddress(bytes);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        deviceIP = android.text.format.Formatter.formatIpAddress(ipAddress);
 
         macAddress = wifiInfo.getMacAddress();
 
         Log.d("DEVICE MAC ADDRESSS", macAddress);
-        Log.d("DEVICE IP ADDRESS: ", ""+ deviceIP);
+        Log.d("DEVICE IP ADDRESS: ", deviceIP);
     }
 
     private void startLocationDiscovery() {
@@ -244,76 +309,6 @@ public class LocationUpdateService extends Service {
 
     }
 
-    // Handler that receives messages from the thread
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-            long endTime = System.currentTimeMillis() + 5*1000;
-            int count = 0;
-            while (System.currentTimeMillis() < endTime) {
-                synchronized (this) {
-                    try {
-                        //Log.d("", "running service" + count++);
-                        //wait(endTime - System.currentTimeMillis());
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            //stopSelf(msg.arg1);
-        }
-    }
 
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-
-    /**
-     *
-     */
-    @Override
-    public void onDestroy() {
-
-        Toast.makeText(this, "Broadcasting stopped", Toast.LENGTH_SHORT).show();
-        isRunning = false;
-        mServiceLooper.quit();
-        locationManager.removeUpdates(locationListener);
-        try {
-            if (clientSocket != null)
-                clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        super.onDestroy();
-    }
-
-    /**
-     *
-     * @param array
-     */
-    private void reverse(byte[] array) {
-        if (array == null) {
-            return;
-        }
-        int i = 0;
-        int j = array.length - 1;
-        byte tmp;
-        while (j > i) {
-            tmp = array[j];
-            array[j] = array[i];
-            array[i] = tmp;
-            j--;
-            i++;
-        }
-    }
 
 }
