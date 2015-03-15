@@ -40,6 +40,7 @@ Locations readXML ( std::istream& istream )
 		location.time = value.second.get<std::string>("time");
 		location.ip_address = value.second.get<std::string>("ip");
 		location.mac_address = value.second.get<std::string>("mac");
+		location.name = value.second.get<std::string>("name");
 
 		//add the location to the list of locations
 		locationList.push_back(location);
@@ -72,6 +73,7 @@ void writeXML ( Locations locationList, std::ostream& ostream )
 		node.put("ip", location.ip_address);
 		node.put("time", location.time);
 		node.put("mac", location.mac_address);
+		node.put("name", location.name);
 	}
 
 	//then write the XML file into the stream
