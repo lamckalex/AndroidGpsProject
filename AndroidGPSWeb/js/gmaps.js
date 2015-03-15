@@ -462,7 +462,7 @@ function allCurrent()
 ----------------------------------------------------------------------------------------------------------------------*/
 function singleMACHistory()
 {
-    mode = " "+document.getElementById("ipAddress").value;
+    mode = " "+document.getElementById("macAddress").value;
     refresh();
 }
 

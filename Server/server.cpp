@@ -295,6 +295,10 @@ Location pDataToLocation (pdata data)
 	new_location.latitude = new_latitude;
 	new_location.ip_address = data.pip;
 	new_location.time = data.ptime;
+	
+	// make sure that the length of the mac address isn't longer than it's supposed to be
+	if (strlen(data.pmac) >= 18)
+		data.pmac[18] = '\0';
 	new_location.mac_address = data.pmac;
 
 	return new_location;
