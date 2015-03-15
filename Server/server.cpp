@@ -246,16 +246,12 @@ pdata rawToPData(char* str)
 	p.pmac = pch;
 
 	pch = strtok (NULL, ",");
-	p.pname = pch;
-	
-	pch = strtok (NULL, ",");
 
 	printf("%s\n", p.plong);
 	printf("%s\n", p.plat);
 	printf("%s\n", p.pip);
 	printf("%s\n", p.ptime);
 	printf("%s\n", p.pmac);
-	printf("%s\n", p.pname);
 
 	return p;
 
@@ -304,8 +300,6 @@ Location pDataToLocation (pdata data)
 	if (strlen(data.pmac) >= 18)
 		data.pmac[18] = '\0';
 	new_location.mac_address = data.pmac;
-	
-	new_location.name = data.pname;
 
 	return new_location;
 }

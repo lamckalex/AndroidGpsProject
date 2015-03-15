@@ -19,7 +19,6 @@ struct Location
 	double latitude;
 	double longitude;
 	std::string mac_address;
-	std::string name;
 };
 
 typedef std::vector<struct Location> Locations;
