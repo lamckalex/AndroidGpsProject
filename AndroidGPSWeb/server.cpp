@@ -3,7 +3,7 @@
 **
 ** PROGRAM:		AndroidGps
 **
-** REVISIONS:	Filip Gutica		-
+** REVISIONS:	Filip Gutica		interfacing tghe server code with the android app
 **				Alex Lam			wrote code to parse gps data into a struct for handling
 **				Sebastian Pelka		interfaced the server with XML reading and writing
 **
@@ -184,9 +184,25 @@ void readFromClient(int client_socket)
 	return;
 }
 
-/*
-Alex's string to char* parser
-*/
+/********************************************************************************************************
+** FUNCTION:	rawToPData
+**
+** DATE:		March 11, 2015
+**
+** REVISIONS:	none
+**
+** DESIGNER:	Alex Lam
+**
+** PROGRAMMER:	Alex Lam
+**
+** INTERFACE:	pdata rawToPData(char* str)
+**
+** PARAMS:		str 	-a raw string containing all the GPS data sent from the Android device to the server
+**
+** RETURNS:		a pdata struct, which contains all information from the string, now separated into individual
+**              character arrays
+**
+*********************************************************************************************************/
 pdata rawToPData(char* str)
 {
 	pdata p;
@@ -218,7 +234,7 @@ pdata rawToPData(char* str)
 }
 
 /*******************************************************************************************************
-** Function: 	pDataToLocation
+** FUNCTION: 	pDataToLocation
 **
 ** DATE:		March 11, 2015
 **
