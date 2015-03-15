@@ -24,13 +24,9 @@ import android.widget.Button;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigInteger;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Formatter;
 
 
 /*****************************************************************************************************
