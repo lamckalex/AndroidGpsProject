@@ -1,3 +1,21 @@
+/*******************************************************************************************************
+** SOURCE FILE: server.cpp
+**
+** PROGRAM:		AndroidGps
+**
+** REVISIONS:	Filip Gutica		-
+**				Alex Lam			wrote code to parse gps data into a struct for handling
+**				Sebastian Pelka		interfaced the server with XML reading and writing
+**
+** DESIGNER:	Sebastian Pelka A00870247
+**
+** PROGRAMMER:	Sebastian Pelka A00870247
+**
+** NOTES:
+** standard server code, the server listens for connections from any IP address and forks a child
+** process to handle each new incoming event.
+******************************************************************************************************/
+
 #include <cstdio>
 #include <netdb.h>
 #include <sys/types.h>
@@ -113,6 +131,9 @@ int main()
 	return 0;
 }
 
+/*
+*
+*/
 void readFromClient(int client_socket)
 {
 	int n, bytes_to_read;
@@ -196,9 +217,26 @@ pdata rawToPData(char* str)
 
 }
 
-/*
-
-*/
+/*******************************************************************************************************
+** Function: 	pDataToLocation
+**
+** DATE:		March 11, 2015
+**
+** REVISIONS:	
+**
+** DESIGNER:	Sebastian Pelka A00870247
+**
+** PROGRAMMER:	Sebastian Pelka A00870247
+**
+** INTERFACE:	Location pDataToLocation (pdata data)
+**
+** Params:		data 	-a structure of GPS data in character format
+**
+** RETURNS:		a Location struct, which is read into an XML document
+**
+** NOTES:
+** reads data in from a pdata struct, converts numerical values to doubles, and returns the new struct
+******************************************************************************************************/
 
 Location pDataToLocation (pdata data)
 {

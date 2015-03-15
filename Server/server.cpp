@@ -115,7 +115,6 @@ int main()
 		{
 			//child code
 			readFromClient(new_socket);
-
 		}
 	}
 
@@ -175,7 +174,6 @@ void readFromClient(int client_socket)
 			close(new_socket);
 			break;
 		}
-
 
 		pdata data = rawToPData(buf);
 		fflush(stdout);
@@ -297,8 +295,10 @@ Location pDataToLocation (pdata data)
 	new_location.latitude = new_latitude;
 	new_location.ip_address = data.pip;
 	new_location.time = data.ptime;
-    if (strlen(data.pmac) >= 18)
-        data.pmac[18] = '\0';
+	
+	// make sure that the length of the mac address isn't longer than it's supposed to be
+	if (strlen(data.pmac) >= 18)
+		data.pmac[18] = '\0';
 	new_location.mac_address = data.pmac;
 
 	return new_location;
