@@ -249,7 +249,7 @@ public class LocationUpdateService extends Service {
 
         String sDate = sdf.format(d);
 
-        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress + ", " + android.os.Build.MODEL;
+        s = l.getLongitude() + ", " + l.getLatitude() + ", " + deviceIP + ", " + sDate + ", " + macAddress;
 
         return s;
     }
