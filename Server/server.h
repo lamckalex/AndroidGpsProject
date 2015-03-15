@@ -30,6 +30,7 @@ struct pdata
   char* pip;
   char* ptime;
   char* pmac;
+  char* pname;
 };
 
 //prototypes
