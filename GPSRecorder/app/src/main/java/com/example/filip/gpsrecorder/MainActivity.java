@@ -48,12 +48,11 @@ import java.util.Date;
  *      private void requestLocationUpdate()
  *      private void updateBtnText(boolean serviceEnabled)
  *      public boolean onOptionsItemSelected(MenuItem item)
- *      private void reverse(byte[] array)
  *      private String buildPacket(Location l)
  *
  *  Inner Classes:
- *      private class RequestConnection
- *      private class WriteSocket
+ *      private class RequestConnection extends AsyncTask
+ *      private class WriteSocket extends AsyncTask
  *
  *	DATE: 		March 13, 2015
  *
@@ -102,8 +101,8 @@ public class MainActivity extends Activity {
      * RETURNS:	void
      *
      * NOTES:
-     * Main entry point of the activity. The first function taht is called when an activity
-     * is instantiated.
+     * Main entry point of the activity. The first function that is called when an activity
+     * is started.
      *************************************************************************************/
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -401,8 +400,6 @@ public class MainActivity extends Activity {
      *************************************************************************************/
     private void requestLocationUpdate() {
 
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
         String useProvider;
         if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 
@@ -497,7 +494,7 @@ public class MainActivity extends Activity {
      * PARAMETERS:
      *          l     - location object
      *
-     * RETURNS:	void
+     * RETURNS:	String      - Comma delimited client location info
      *
      * NOTES:
      * builds a packet containing a longitude, latitude, ip address, date and macAddress
@@ -613,7 +610,7 @@ public class MainActivity extends Activity {
          * RETURNS:	void
          *
          * NOTES:
-         * Writes the passed string in params on the client socket
+         * Writes the supplied string in params to the client socket
          *************************************************************************************/
         protected String doInBackground(Object... params) {
 
