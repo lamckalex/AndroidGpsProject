@@ -1,3 +1,16 @@
+/*****************************************************************************************************
+**	SOURCE FILE:	xmlmanip.h		header file that contains data structures for reading to and writing
+**									from XML files.
+**	 	
+**	PROGRAM:	server
+**
+**	DATE: 		March 12, 2015
+**
+**	DESIGNERS: 	Sebastian Pelka 
+**
+**	PROGRAMMER: Sebastian Pelka
+**
+*********************************************************************************************************/
 #ifndef SERVER_H
 #define SERVER_H
 
