@@ -1,23 +1,49 @@
-/*-----------------------------------------------------------------------
---
---
---
---
---
--- REFERENCES:
--- https://akrzemi1.wordpress.com/2011/07/13/parsing-xml-with-boost/
--- http://www.boost.org/doc/libs/1_57_0/doc/html/property_tree.html	
---------------------------------------------------------------------------*/
+/*****************************************************************************************************
+**	SOURCE FILE:	xmlmanip.cpp	source file that contains functions for reading from and writing
+**									to XML files.
+**	 	
+**	PROGRAM:	server
+**
+**	FUNCTIONS:
+**		Locations readXML ( std::istream& istream )
+**		void writeXML ( Locations locationList, std::ostream& ostream )
+**
+**	DATE: 		March 12, 2015
+**
+**	DESIGNERS: 	Sebastian Pelka 
+**
+**	PROGRAMMER: Sebastian Pelka
+**
+**  REFERENCES:
+**  https://akrzemi1.wordpress.com/2011/07/13/parsing-xml-with-boost/
+**  http://www.boost.org/doc/libs/1_57_0/doc/html/property_tree.html	
+*********************************************************************************************************/
 #include "xmlmanip.h"
 
-/*-----------------------------------------------------------------------
---  FUNCTION: readXML
---
---  NOTES: reads XML data in from input.txt into a tree and returns the
---  tree as a vector of Locations 
---
---
---------------------------------------------------------------------------*/
+/***************************************************************************
+** Function:		readXML ( std::istream& istream )
+**
+** DATE:			March 12, 2015
+**
+** DESIGNER:		Sebastian Pelka
+**
+** PROGRAMMER:		Sebastian Pelka
+**
+** INTERFACE:		Locations readXML ( std::istream& istream )
+**
+** PARAMETERS:
+**			istream		- input stream object that will read an XML file
+**
+** REVISIONS:
+**			March 13, 2015 		-Modified by Filip to handle a fifth
+**								 element: mad address
+**
+** RETURNS:	a vector of Location structs; the data from the XML file
+**
+** NOTES:
+** Reads in data from an XML file into Location structs, which are then stored
+** as a vector of Locations.
+*****************************************************************************/
 Locations readXML ( std::istream& istream )
 {
 	//create a tree structure
@@ -48,14 +74,30 @@ Locations readXML ( std::istream& istream )
 	return locationList;
 }
 
-
-/*-----------------------------------------------------------------------
---  FUNCTION: writeXML
---
---  NOTES: Writes XML data stored in a vector of Locations into an XML
---  output file.
---
---------------------------------------------------------------------------*/
+/***************************************************************************
+** Function:		writeXML ( Locations locationList, std::ostream& ostream )
+**
+** DATE:			March 12, 2015
+**
+** DESIGNER:		Sebastian Pelka
+**
+** PROGRAMMER:		Sebastian Pelka
+**
+** INTERFACE:		void writeXML ( Locations locationList, std::ostream& ostream )
+**
+** PARAMETERS:
+**			locationList- a vector of Location structs
+**			ostream		- output stream object that will read an XML file
+**
+** REVISIONS:
+**			March 13, 2015 		-Modified by Filip to handle a fifth
+**								 element: mad address
+**
+** RETURNS:	void
+**
+** NOTES:
+** Writes the contents of a Locations vector into an XML file.
+*****************************************************************************/
 void writeXML ( Locations locationList, std::ostream& ostream )
 {
 	///create a tree
