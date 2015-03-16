@@ -20,7 +20,7 @@
 --
 -- DATE: March 13, 2015
 --
--- REVISIONS: (Date and Description)
+-- REVISIONS: Mar 14, 2015 - Sanders Lee - Changed it from loading all XML coordinates to either most recent or by mac id depending on mode.
 --
 -- DESIGNER: Alex Lam
 --
@@ -106,12 +106,11 @@ function loadXMLDoc(filename)
 --
 -- DATE: March 13, 2015
 --
--- REVISIONS: (Date and Description)
+-- REVISIONS: Mar 14, 2015 - Sanders Lee - Added cell for mac id
 --
 -- DESIGNER: Alex Lam
 --
 -- PROGRAMMER: Alex Lam
---             Sanders Lee
 --
 -- INTERFACE: function makeTableRow(row, mac, ip, time, longt, lat)
 --
@@ -142,12 +141,11 @@ function makeTableRow(row, mac, ip, time, longt, lat)
 --
 -- DATE: March 13, 2015
 --
--- REVISIONS: (Date and Description)
+-- REVISIONS: Mar 14, 2015 - Sanders Lee - Added cell for mac id
 --
 -- DESIGNER: Alex Lam
 --
 -- PROGRAMMER: Alex Lam
---             Sanders Lee
 --
 -- INTERFACE: function makeTableHead()
 --

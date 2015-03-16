@@ -21,8 +21,6 @@
 **	PROGRAMMER: Sebastian Pelka
 **				Sanders Lee
 **
-**	NOTES:
-** 
 *********************************************************************************************************/
 #include "server.h"
 
@@ -262,9 +260,9 @@ pdata rawToPData(char* str)
 **
 ** DATE: March 13, 2015
 **
-** DESIGNER:	Sebastian Pelka
+** DESIGNER:	Sebastian Pelka A00870247
 **
-** PROGRAMMER:	Sebastian Pelka
+** PROGRAMMER:	Sebastian Pelka A00870247
 **
 ** INTERFACE:	rawToPData(char*)
 **
